@@ -1,0 +1,6 @@
+{
+  "name": "White Red Sidebar",
+  "description": "A sleek sidebar navigation application designed with a feature-based folder architecture using a clean white and red color palette.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
