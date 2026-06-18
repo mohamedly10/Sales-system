@@ -617,7 +617,7 @@ export const ExportsManagement: React.FC = () => {
                   {/* البيان والسبب التفصيلي للمدفوعات */}
                   <div className="space-y-1">
                     <label className="block text-[11px] font-medium text-slate-550 flex items-center justify-between">
-                      <span>البيان / تفصيل الصرف والتوجيه القانوني للعملية</span>
+                      <span>ملاحظات</span>
                       <span className="text-red-500 text-[10px]">* حقل مطلوب</span>
                     </label>
                     <textarea
