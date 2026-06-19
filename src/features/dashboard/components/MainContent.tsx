@@ -18,9 +18,11 @@ import {
   Sparkles
 } from 'lucide-react';
 import { THEME } from '../../../theme';
-import { PeopleManagement } from '../../operations/components/PeopleManagement';
-import { ExportsManagement } from '../../operations/components/ExportsManagement';
-import { ImportsManagement } from '../../operations/components/ImportsManagement';
+import { PeopleManagement } from '../../personal/components/PeopleManagement';
+import { ExportsManagement } from '../../export/components/ExportsManagement';
+import { ImportsManagement } from '../../import/components/ImportsManagement';
+import { ReportsManagement } from '../../report/components/ReportsManagement';
+import { MainPage } from '../../mainpage/components/MainPage';
 
 interface MainContentProps {
   activeId: string;
@@ -96,12 +98,16 @@ export const MainContent: React.FC<MainContentProps> = ({ activeId }) => {
   // Dynamically render operations features
   const renderFeatureContent = () => {
     switch (activeId) {
+      case 'mainpage':
+        return <MainPage />;
       case 'people':
         return <PeopleManagement />;
       case 'exports':
         return <ExportsManagement />;
       case 'imports':
         return <ImportsManagement />;
+      case 'reports':
+        return <ReportsManagement />;
       default:
         return (
           <div className="p-12 text-center border border-dashed border-slate-200 rounded-2xl bg-white flex flex-col items-center justify-center min-h-[350px]">
@@ -118,7 +124,7 @@ export const MainContent: React.FC<MainContentProps> = ({ activeId }) => {
   return (
     <div className={`flex-1 min-h-screen overflow-y-auto flex flex-col ${THEME.neutral.appBackground}`}>
       {/* Header Bar - Floating island matching the Sidebar style */}
-      <header className="mx-4 md:mx-12 mt-4 bg-white border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.02)] rounded-[1.8rem] h-20 flex items-center justify-between px-6 sticky top-4 z-20 select-none">
+      <header className="mx-4 md:mx-12 mt-4 bg-white border border-slate-100 rounded-[1.8rem] h-20 flex items-center justify-between px-6 sticky top-4 z-20 select-none">
         <div className="flex items-center gap-3">
           {/* Mobile Only: Brand Logo to match Sidebar Concept */}
           <div className="md:hidden flex items-center gap-2">
@@ -182,17 +188,7 @@ export const MainContent: React.FC<MainContentProps> = ({ activeId }) => {
       {/* Main Container Content */}
       <main className="flex-1 px-8 md:px-12 pt-6 pb-24 md:pb-12 space-y-8">
         {/* Module Header Overview Card */}
-        <div className="p-8 rounded-3xl border border-slate-100 bg-white shadow-xs relative overflow-hidden">
-          <div className="max-w-3xl">
-            <span className={`${THEME.primary.text} font-semibold text-xs tracking-widest uppercase`}>مستند النظام الموحد</span>
-            <h2 className="text-2xl font-bold mt-1.5 leading-tight text-slate-800">
-              {activeName}
-            </h2>
-            <p className="text-slate-400 mt-2 text-xs leading-relaxed">
-              {getPageDescription(activeId)}
-            </p>
-          </div>
-        </div>
+
 
         {/* Dynamic Interactive Component View */}
         <AnimatePresence mode="wait">

@@ -56,7 +56,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.03)] z-50 p-1.5 space-y-0.5">
+        <div className="absolute right-0 mt-2 w-48 bg-white border border-slate-100 rounded-2xl z-50 p-1.5 space-y-0.5">
           {options.map((option) => {
             const isSelected = option.value === selectedValue;
             return (

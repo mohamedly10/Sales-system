@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { THEME } from '../../../theme';
 import { SearchInput } from '../../../components/ui/SearchInput';
 import { Dropdown, DropdownOption } from '../../../components/ui/Dropdown';
+import { PageHeader } from '../../../components/ui/PageHeader';
 
 // 1. البيانات النموذجية لإدارة الصادرات (Sample Exports Data)
 const initialExportsData = [
@@ -61,6 +62,7 @@ export const ExportsManagement: React.FC = () => {
     return today.toISOString().split('T')[0];
   });
   const [formPerson, setFormPerson] = useState('');
+  const [formReason, setFormReason] = useState('');
   const [formAmount, setFormAmount] = useState('');
   const [formDescription, setFormDescription] = useState('');
   
@@ -174,6 +176,7 @@ export const ExportsManagement: React.FC = () => {
       code: nextAutoCode,
       date: formDate,
       person: formPerson.trim(),
+      reason: formReason.trim(),
       amount: parseFloat(formAmount),
       description: formDescription.trim(),
       attachment: attachedFile
@@ -184,6 +187,7 @@ export const ExportsManagement: React.FC = () => {
     // Reset fields
     setFormDate(new Date().toISOString().split('T')[0]);
     setFormPerson('');
+    setFormReason('');
     setFormAmount('');
     setFormDescription('');
     setAttachedFile(null);
@@ -215,10 +219,10 @@ export const ExportsManagement: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         
         {/* إجمالي المصروفات / الصادرات المالية */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between font-sans shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
+        <div className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between font-sans">
           <div>
-            <span className="text-[11px] font-semibold text-slate-400">إجمالي الصادرات والمدفوعات</span>
-            <h4 className="text-xl font-bold text-slate-800 mt-1 font-mono">
+            <span className="text-[11px] font-medium text-slate-400">إجمالي الصادرات والمدفوعات</span>
+            <h4 className="text-xl font-medium text-slate-800 mt-1 font-mono">
               {exports.reduce((sum, item) => sum + item.amount, 0).toLocaleString()} د.ل
             </h4>
           </div>
@@ -228,10 +232,10 @@ export const ExportsManagement: React.FC = () => {
         </div>
 
         {/* عدد الحركات الكلي */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between font-sans shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
+        <div className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between font-sans">
           <div>
-            <span className="text-[11px] font-semibold text-slate-400">إجمالي المعاملات المالية</span>
-            <h4 className="text-xl font-bold text-slate-800 mt-1 font-mono">
+            <span className="text-[11px] font-medium text-slate-400">إجمالي المعاملات المالية</span>
+            <h4 className="text-xl font-medium text-slate-800 mt-1 font-mono">
               {exports.length} حركة
             </h4>
           </div>
@@ -241,10 +245,10 @@ export const ExportsManagement: React.FC = () => {
         </div>
 
         {/* المدفوعات بمستندات أو مرفقات */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between font-sans shadow-[0_2px_8px_rgba(0,0,0,0.01)]">
+        <div className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between font-sans">
           <div>
-            <span className="text-[11px] font-semibold text-slate-400">حركات بمرفقات رسمية</span>
-            <h4 className="text-xl font-bold text-slate-800 mt-1 font-mono">
+            <span className="text-[11px] font-medium text-slate-400">حركات بمرفقات رسمية</span>
+            <h4 className="text-xl font-medium text-slate-800 mt-1 font-mono">
               {exports.filter(e => e.attachment !== null).length} معتمدة
             </h4>
           </div>
@@ -254,32 +258,28 @@ export const ExportsManagement: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. عنوان لوحة الصادرات وإجراءات إضافة صادر مالي */}
-      <div className="flex items-center justify-between px-1">
-        <h3 className="text-sm md:text-base font-semibold text-slate-800">سجل الصادرات المالية الحالي في المنظومة</h3>
-        <div className="flex items-center gap-2">
-          {selectedRows.length > 0 && (
-            <button
-              onClick={deleteSelected}
-              className="flex items-center gap-1.5 px-4 py-2 border border-red-100 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 text-xs font-semibold rounded-2xl transition-all cursor-pointer active:scale-95"
-            >
-              <Trash2 size={13} />
-              <span>حذف المحدد ({selectedRows.length})</span>
-            </button>
-          )}
-
+      <PageHeader title="سجل الصادرات المالية الحالي في المنظومة">
+        {selectedRows.length > 0 && (
           <button
-            onClick={() => setIsModalOpen(true)}
-            className={`flex items-center gap-1.5 px-4.5 py-2 ${THEME.primary.solid} ${THEME.primary.solidHover} text-white text-xs font-semibold rounded-2xl transition-all active:scale-95 cursor-pointer select-none`}
+            onClick={deleteSelected}
+            className="flex items-center gap-1.5 px-4 py-2 border border-red-100 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 text-xs font-medium rounded-2xl transition-all cursor-pointer active:scale-95"
           >
-            <Plus size={14} />
-            <span>إضافة صادر مالي</span>
+            <Trash2 size={13} />
+            <span>حذف المحدد ({selectedRows.length})</span>
           </button>
-        </div>
-      </div>
+        )}
+
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className={`flex items-center gap-1.5 px-4.5 py-2 ${THEME.primary.solid} ${THEME.primary.solidHover} text-white text-xs font-medium rounded-2xl transition-all active:scale-95 cursor-pointer select-none`}
+        >
+          <Plus size={14} />
+          <span>إضافة صادر مالي</span>
+        </button>
+      </PageHeader>
 
       {/* 3. حاوية العرض الرئيسية للجدول والبحث الفوري */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] overflow-hidden font-sans">
+      <div className=" bg-white rounded-3xl border border-slate-100 overflow-hidden font-sans">
         
         {/* شريط التصفية والبحث العلوي */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between p-5 border-b border-slate-50 gap-4">
@@ -301,12 +301,12 @@ export const ExportsManagement: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 pt-4 lg:pt-0 border-slate-50">
-            <span className="text-[11px] font-semibold text-slate-400 select-none">صف مرشح: {filteredExports.length}</span>
+            <span className="text-[11px] font-medium text-slate-400 select-none">صف مرشح: {filteredExports.length}</span>
             <div className="flex items-center gap-1.5">
               <button className="p-1 hover:bg-slate-50 border border-slate-100 rounded-lg text-slate-400 hover:text-slate-700 transition-all cursor-pointer">
                 <ChevronRight size={14} />
               </button>
-              <span className="text-xs font-semibold text-slate-600 px-1 font-mono">1 من 1</span>
+              <span className="text-xs font-medium text-slate-600 px-1 font-mono">1 من 1</span>
               <button className="p-1 hover:bg-slate-50 border border-slate-100 rounded-lg text-slate-400 hover:text-slate-700 transition-all cursor-pointer">
                 <ChevronLeft size={14} />
               </button>
@@ -328,12 +328,10 @@ export const ExportsManagement: React.FC = () => {
                       checked={filteredExports.length > 0 && filteredExports.every(e => selectedRows.includes(e.id))}
                     />
                   </th>
-                  <th className="p-4 text-xs font-semibold tracking-wider text-slate-400">رقم العملية</th>
-                  <th className="p-4 text-xs font-semibold tracking-wider text-slate-400">التاريخ</th>
-                  <th className="p-4 text-xs font-semibold tracking-wider text-slate-400">الشخص / الجهة المستلمة</th>
-                  <th className="p-4 text-xs font-semibold tracking-wider text-slate-400">القيمة والتدفق المالي</th>
-                  <th className="p-4 text-xs font-semibold tracking-wider text-slate-400">البيان ووثائق التوجيه المالي</th>
-                  <th className="p-4 text-xs font-semibold tracking-wider text-slate-400">المرفق التعزيزي</th>
+                  <th className="p-4 text-xs font-medium tracking-wider text-slate-400">كود المرجع</th>
+                  <th className="p-4 text-xs font-medium tracking-wider text-slate-400">التاريخ \ الطرف</th>
+                  <th className="p-4 text-xs font-medium tracking-wider text-slate-400">النوع / القيمة</th>
+                  <th className="p-4 text-xs font-medium tracking-wider text-slate-400">الحالة</th>
                   <th className="p-4 w-12 text-center text-slate-400">إجراءات</th>
                 </tr>
               </thead>
@@ -347,7 +345,6 @@ export const ExportsManagement: React.FC = () => {
                         isChecked ? 'bg-red-50/10' : 'hover:bg-slate-50/40'
                       }`}
                     >
-                      {/* Checkbox selector */}
                       <td className="p-4 text-center">
                         <input
                           type="checkbox"
@@ -357,44 +354,39 @@ export const ExportsManagement: React.FC = () => {
                         />
                       </td>
 
-                      {/* Transaction code serial */}
-                      <td className="p-4 text-xs font-bold text-slate-800 font-mono" dir="ltr">
+                      <td className="p-4 text-xs font-medium text-slate-800 font-mono" dir="ltr">
                         {row.code}
                       </td>
 
-                      {/* Date of action */}
-                      <td className="p-4 text-xs font-medium text-slate-500 font-mono" dir="ltr">
-                        {row.date}
+                      <td className="p-4">
+                        <div className="flex flex-col">
+                          <span className="text-[10px] text-slate-400 font-mono" dir="ltr">{row.date}</span>
+                          <span className="text-xs font-medium text-slate-800 mt-0.5">{row.person}</span>
+                          <span className="text-[10px] text-slate-400 leading-relaxed line-clamp-1 mt-0.5 max-w-[220px]">{row.description}</span>
+                        </div>
                       </td>
 
-                      {/* Targeted entity or individual */}
-                      <td className="p-4 text-xs font-semibold text-slate-800">
-                        {row.person}
+                      <td className="p-4">
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex px-2 py-0.5 bg-red-50 text-red-700 rounded-md text-[10px] font-medium">صادرات</span>
+                          <span className="text-xs font-medium font-mono text-red-600" dir="ltr">-{row.amount.toLocaleString()} د.ل</span>
+                        </div>
                       </td>
 
-                      {/* Value / Amount of money */}
-                      <td className={`p-4 text-xs font-bold font-mono text-red-600`} dir="ltr">
-                        -{row.amount.toLocaleString()} د.ل
-                      </td>
-
-                      {/* Statement description */}
-                      <td className="p-4 text-xs text-slate-600 leading-relaxed max-w-[280px]" title={row.description}>
-                        {row.description}
-                      </td>
-
-                      {/* Attachment Status */}
-                      <td className="p-4 text-right">
+                      <td className="p-4">
                         {row.attachment ? (
-                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-50/60 border border-indigo-100 text-indigo-700 rounded-lg text-[11px] font-semibold" title={`${row.attachment.name} (${row.attachment.size})`}>
-                            <Paperclip size={11} className="flex-shrink-0" />
-                            <span className="truncate max-w-[120px]">{row.attachment.name}</span>
-                          </div>
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            معتمد
+                          </span>
                         ) : (
-                          <span className="text-[10px] text-slate-350 italic">لا يوجد مستند</span>
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-[11px] font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                            قيد الانتظار
+                          </span>
                         )}
                       </td>
 
-                      {/* Quick item action list */}
                       <td className="p-4 text-center">
                         <div className="flex items-center justify-center gap-1">
                           <button 
@@ -416,7 +408,7 @@ export const ExportsManagement: React.FC = () => {
               <div className={`w-12 h-12 rounded-full ${THEME.primary.lightBg} flex items-center justify-center ${THEME.primary.text} mb-3`}>
                 <FolderOpen size={20} />
               </div>
-              <h4 className="text-xs font-bold text-slate-500">لا توجد سجلات مطابقة لعوامل هذا التصفية</h4>
+              <h4 className="text-xs font-medium text-slate-500">لا توجد سجلات مطابقة لعوامل هذا التصفية</h4>
               <p className="text-[11px] text-slate-400 mt-1 max-w-xs">يرجى تعديل معلمات تصفية البحث أو الضغط على زر "إضافة صادر" لتسجيل معاملة مالية جديدة.</p>
             </div>
           )}
@@ -443,7 +435,7 @@ export const ExportsManagement: React.FC = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ type: "spring", duration: 0.4 }}
-              className="relative bg-white rounded-3xl border border-slate-100 shadow-[0_12px_45px_rgba(0,0,0,0.04)] p-6 w-full max-w-lg z-10 space-y-5 font-sans"
+              className="relative bg-white rounded-3xl border border-slate-100 p-6 w-full max-w-lg z-10 space-y-5 font-sans"
             >
               
               {/* ترويسة نافذة المعرف */}
@@ -453,7 +445,7 @@ export const ExportsManagement: React.FC = () => {
                     <Plus size={16} />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-800">تسجيل قيد صادر مالي جديد</h3>
+                    <h3 className="text-sm font-medium text-slate-800">تسجيل قيد صادر مالي جديد</h3>
                     <p className="text-[10px] text-slate-400">توثيق وخروج المبالغ النقدية والمصالح الفردية</p>
                   </div>
                 </div>
@@ -473,21 +465,21 @@ export const ExportsManagement: React.FC = () => {
                   
                   {/* رمز العملية (مولد تلقائياً) */}
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-semibold text-slate-400">رمز المعاملة المالي</label>
+                    <label className="block text-[10px] font-medium text-slate-400">رمز المعاملة المالي</label>
                     <div className="relative">
                       <FileText size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
                       <input
                         type="text"
                         disabled
                         value={nextAutoCode}
-                        className="w-full pr-8 pl-3 py-2 bg-slate-100/80 border border-slate-200/60 rounded-xl text-xs font-bold text-slate-500 font-mono text-center select-none"
+                        className="w-full pr-8 pl-3 py-2 bg-slate-100/80 border border-slate-200/60 rounded-xl text-xs font-medium text-slate-500 font-mono text-center select-none"
                       />
                     </div>
                   </div>
 
                   {/* تاريخ تسجيل الحركة المالي */}
                   <div className="space-y-1">
-                    <label className="block text-[10px] font-semibold text-slate-500">تاريخ تسجيل الحركة</label>
+                    <label className="block text-[10px] font-medium text-slate-500">تاريخ تسجيل الحركة</label>
                     <div className="relative">
                       <Calendar size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400Pointer" />
                       <input
@@ -495,7 +487,7 @@ export const ExportsManagement: React.FC = () => {
                         required
                         value={formDate}
                         onChange={(e) => setFormDate(e.target.value)}
-                        className={`w-full pr-8 pl-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 font-mono focus:outline-none focus:ring-4 ${THEME.primary.ringFocus} transition-all`}
+                        className={`w-full pr-8 pl-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 font-mono focus:outline-none focus:ring-4 ${THEME.primary.ringFocus} transition-all`}
                       />
                     </div>
                   </div>
@@ -571,7 +563,7 @@ export const ExportsManagement: React.FC = () => {
                                   onClick={() => {
                                     setIsPersonDropdownOpen(false);
                                   }}
-                                  className={`mt-1.5 inline-flex items-center gap-1 text-[10px] font-bold ${THEME.primary.text} hover:underline cursor-pointer`}
+                                  className={`mt-1.5 inline-flex items-center gap-1 text-[10px] font-medium ${THEME.primary.text} hover:underline cursor-pointer`}
                                 >
                                   استخدام الاسم الحالي المكتوب: "{formPerson}"
                                 </button>
@@ -591,6 +583,22 @@ export const ExportsManagement: React.FC = () => {
                     )}
                   </div>
 
+                  {/* سبب الصرف */}
+                  <div className="space-y-1">
+                    <label className="block text-[11px] font-medium text-slate-500 flex items-center justify-between">
+                      <span>سبب الصرف</span>
+                      <span className="text-red-500 text-[10px]">* حقل مطلوب</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="اكتب سبب الصرف (مثال: سداد فاتورة، سلفة تشغيلية...)"
+                      value={formReason}
+                      onChange={(e) => setFormReason(e.target.value)}
+                      className={`w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-medium focus:outline-none focus:ring-4 ${THEME.primary.ringFocus} transition-all`}
+                    />
+                  </div>
+
                   {/* القيمة المالية لتسجيل القيمة الصادرة */}
                   <div className="space-y-1">
                     <label className="block text-[11px] font-medium text-slate-550 flex items-center justify-between">
@@ -598,18 +606,18 @@ export const ExportsManagement: React.FC = () => {
                       <span className="text-red-500 text-[10px]">* حقل مطلوب</span>
                     </label>
                     <div className="relative">
-                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center text-slate-400 text-xs font-semibold select-none">
+                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center text-slate-400 text-xs font-medium select-none">
                         د.ل
                       </div>
                       <input
                         type="number"
                         required
-                        min="0.01"
-                        step="any"
+                        min="1"
+                        step="1"
                         placeholder="مثال: 1500"
                         value={formAmount}
                         onChange={(e) => setFormAmount(e.target.value)}
-                        className={`w-full pr-11 pl-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-semibold text-slate-700 font-mono focus:outline-none focus:ring-4 ${THEME.primary.ringFocus} transition-all`}
+                        className={`w-full pr-11 pl-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-medium text-slate-700 font-mono focus:outline-none focus:ring-4 ${THEME.primary.ringFocus} transition-all`}
                       />
                     </div>
                   </div>
@@ -657,7 +665,7 @@ export const ExportsManagement: React.FC = () => {
                           <Upload size={14} className="animate-pulse" />
                         </div>
                         <div>
-                          <p className="text-[11px] font-bold text-slate-600">اسحب الملف وأفلته هنا، أو تصفّح</p>
+                          <p className="text-[11px] font-medium text-slate-600">اسحب الملف وأفلته هنا، أو تصفّح</p>
                           <p className="text-[9px] text-slate-400 mt-0.5">يدعم الصور والمستندات بحد أقصى 5 ميجابايت</p>
                         </div>
                       </div>
@@ -666,7 +674,7 @@ export const ExportsManagement: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <Paperclip size={13} className="text-indigo-600 flex-shrink-0" />
                           <div className="text-right">
-                            <p className="text-[11px] font-bold text-slate-700 truncate max-w-[200px]">{attachedFile.name}</p>
+                            <p className="text-[11px] font-medium text-slate-700 truncate max-w-[200px]">{attachedFile.name}</p>
                             <span className="text-[9px] text-slate-400 font-mono">{attachedFile.size}</span>
                           </div>
                         </div>
@@ -694,7 +702,7 @@ export const ExportsManagement: React.FC = () => {
                   </button>
                   <button
                     type="submit"
-                    className={`px-5 py-2.5 ${THEME.primary.solid} ${THEME.primary.solidHover} text-white text-xs font-bold rounded-2xl transition-all shadow-[0_4px_12px_${THEME.primary.shadowSoft}] active:scale-95 cursor-pointer`}
+                    className={`px-5 py-2.5 ${THEME.primary.solid} ${THEME.primary.solidHover} text-white text-xs font-medium rounded-2xl transition-all shadow-[0_4px_12px_${THEME.primary.shadowSoft}] active:scale-95 cursor-pointer`}
                   >
                     تأكيد إدخال الصادر
                   </button>

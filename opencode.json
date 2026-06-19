@@ -1,1 +1,3 @@
-{"plugin": ["@plannotator/opencode@latest"]}
+{
+    "plugin": ["@plannotator/opencode@latest"]
+}

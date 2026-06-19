@@ -18,6 +18,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { THEME } from '../../../theme';
 import { SearchInput } from '../../../components/ui/SearchInput';
 import { Dropdown, DropdownOption } from '../../../components/ui/Dropdown';
+import { PageHeader } from '../../../components/ui/PageHeader';
 
 // 1. البيانات النموذجية لإدارة مستخدمي النظام والجهات (People Data)
 const initialPeopleData = [
@@ -55,7 +56,7 @@ const getTodayFormatted = () => {
 const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
   const meta = statusTranslation[status] || { ar: status, class: 'bg-slate-100 text-slate-600 border border-slate-200' };
   return (
-    <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold ${meta.class}`}>
+    <span className={`px-2.5 py-1 rounded-lg text-xs font-medium ${meta.class}`}>
       {meta.ar}
     </span>
   );
@@ -145,8 +146,8 @@ export const PeopleManagement: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between font-sans">
           <div>
-            <span className="text-[11px] font-semibold text-slate-400">إجمالي الأشخاص والجهات</span>
-            <h4 className="text-xl font-bold text-slate-800 mt-1">{people.length}</h4>
+            <span className="text-[11px] font-medium text-slate-400">إجمالي الأشخاص والجهات</span>
+            <h4 className="text-xl font-semibold text-slate-800 mt-1">{people.length}</h4>
           </div>
           <div className={`w-10 h-10 rounded-xl ${THEME.primary.lightBg} flex items-center justify-center ${THEME.primary.text}`}>
             <SlidersHorizontal size={18} />
@@ -154,8 +155,8 @@ export const PeopleManagement: React.FC = () => {
         </div>
         <div className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between font-sans">
           <div>
-            <span className="text-[11px] font-semibold text-slate-400">الصفوف المحددة</span>
-            <h4 className="text-xl font-bold text-slate-800 mt-1">{selectedRows.length}</h4>
+            <span className="text-[11px] font-medium text-slate-400">الصفوف المحددة</span>
+            <h4 className="text-xl font-semibold text-slate-800 mt-1">{selectedRows.length}</h4>
           </div>
           <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
             <UserCheck size={18} />
@@ -163,8 +164,8 @@ export const PeopleManagement: React.FC = () => {
         </div>
         <div className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between font-sans">
           <div>
-            <span className="text-[11px] font-semibold text-slate-400">المستخدمين النشطين</span>
-            <h4 className="text-xl font-bold text-slate-800 mt-1">
+            <span className="text-[11px] font-medium text-slate-400">المستخدمين النشطين</span>
+            <h4 className="text-xl font-semibold text-slate-800 mt-1">
               {people.filter(p => p.status === 'Active').length}
             </h4>
           </div>
@@ -174,20 +175,18 @@ export const PeopleManagement: React.FC = () => {
         </div>
       </div>
 
-      {/* عنوان القسم وبطل الإجراءات الإضافي (زر إضافة مستخدم) فوق الجدول */}
-      <div className="flex items-center justify-between px-1">
-        <h3 className="text-sm md:text-base font-semibold text-slate-800">قائمة السجلات والبيانات الحالية</h3>
+      <PageHeader title="قائمة السجلات والبيانات الحالية">
         <button
           onClick={() => setIsModalOpen(true)}
-          className={`flex items-center gap-1.5 px-4.5 py-2 ${THEME.primary.solid} ${THEME.primary.solidHover} text-white text-xs font-semibold rounded-2xl transition-all active:scale-95 cursor-pointer select-none`}
+          className={`flex items-center gap-1.5 px-4.5 py-2 ${THEME.primary.solid} ${THEME.primary.solidHover} text-white text-xs font-medium rounded-2xl transition-all active:scale-95 cursor-pointer select-none`}
         >
           <Plus size={14} />
           <span>إضافة مستخدم</span>
         </button>
-      </div>
+      </PageHeader>
 
       {/* الحاوية الرئيسية للجدول */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.01)] overflow-hidden font-sans">
+      <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden font-sans">
         
         {/* شريط الأدوات العلوي مع اتجاه RTL متناسق كلياً */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between p-5 border-b border-slate-50 gap-4">
@@ -212,12 +211,12 @@ export const PeopleManagement: React.FC = () => {
           {/* الترقيم (Pagination) والتأثيرات */}
           <div className="flex flex-wrap items-center justify-between lg:justify-end gap-4 border-t lg:border-t-0 pt-4 lg:pt-0 border-slate-50">
             <div className="flex items-center gap-3">
-              <span className="text-[11px] font-semibold text-slate-400 select-none">عدد الصفوف: {filteredPeople.length}</span>
+              <span className="text-[11px] font-medium text-slate-400 select-none">عدد الصفوف: {filteredPeople.length}</span>
               <div className="flex items-center gap-1.5">
                 <button className="p-1 hover:bg-slate-50 border border-slate-100 rounded-lg text-slate-400 hover:text-slate-700 transition-all cursor-pointer">
                   <ChevronRight size={14} />
                 </button>
-                <span className="text-xs font-semibold text-slate-600 px-1 font-mono">1 من 1</span>
+                <span className="text-xs font-medium text-slate-600 px-1 font-mono">1 من 1</span>
                 <button className="p-1 hover:bg-slate-50 border border-slate-100 rounded-lg text-slate-400 hover:text-slate-700 transition-all cursor-pointer">
                   <ChevronLeft size={14} />
                 </button>
@@ -240,13 +239,13 @@ export const PeopleManagement: React.FC = () => {
                       checked={filteredPeople.length > 0 && filteredPeople.every(p => selectedRows.includes(p.id))}
                     />
                   </th>
-                  <th className="p-4 text-xs font-semibold tracking-wider text-slate-400">الاسم / الجهة</th>
-                  <th className="p-4 text-xs font-semibold tracking-wider text-slate-400">رقم الهاتف</th>
-                  <th className="p-4 text-xs font-semibold tracking-wider text-slate-400">النشاط / الشركة</th>
-                  <th className="p-4 text-xs font-semibold tracking-wider text-slate-400">العنوان</th>
-                  <th className="p-4 text-xs font-semibold tracking-wider text-slate-400">تاريخ الإضافة</th>
-                  <th className="p-4 text-xs font-semibold tracking-wider text-slate-400">الحالة</th>
-                  <th className="p-4 text-xs font-semibold tracking-wider text-slate-400">تفاصيل / ملاحظات</th>
+                  <th className="p-4 text-xs font-medium tracking-wider text-slate-400">الاسم / الجهة</th>
+                  <th className="p-4 text-xs font-medium tracking-wider text-slate-400">رقم الهاتف</th>
+                  <th className="p-4 text-xs font-medium tracking-wider text-slate-400">النشاط / الشركة</th>
+                  <th className="p-4 text-xs font-medium tracking-wider text-slate-400">العنوان</th>
+                  <th className="p-4 text-xs font-medium tracking-wider text-slate-400">تاريخ الإضافة</th>
+                  <th className="p-4 text-xs font-medium tracking-wider text-slate-400">الحالة</th>
+                  <th className="p-4 text-xs font-medium tracking-wider text-slate-400">تفاصيل / ملاحظات</th>
                   <th className="p-4 w-12 text-center text-slate-400">
                     <Settings size={14} className="mx-auto" />
                   </th>
@@ -270,7 +269,7 @@ export const PeopleManagement: React.FC = () => {
                           onChange={() => toggleRow(row.id)}
                         />
                       </td>
-                      <td className="p-4 text-xs font-semibold text-slate-800">{row.name}</td>
+                      <td className="p-4 text-xs font-medium text-slate-800">{row.name}</td>
                       <td className="p-4 text-xs font-medium text-slate-600 font-mono" dir="ltr">{row.phone}</td>
                       <td className="p-4 text-xs font-medium text-slate-700">{row.companyName}</td>
                       <td className="p-4 text-xs font-normal text-slate-500">{row.address}</td>
@@ -318,7 +317,7 @@ export const PeopleManagement: React.FC = () => {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ type: "spring", duration: 0.4 }}
-              className="relative bg-white rounded-3xl border border-slate-100 shadow-[0_12px_45px_rgba(0,0,0,0.04)] p-6 w-full max-w-lg z-10 space-y-5 font-sans"
+              className="relative bg-white rounded-3xl border border-slate-100 p-6 w-full max-w-lg z-10 space-y-5 font-sans"
             >
               {/* Header */}
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -327,7 +326,7 @@ export const PeopleManagement: React.FC = () => {
                     <Plus size={16} />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-800">إضافة سجل شخص / جهة جديدة</h3>
+                    <h3 className="text-sm font-medium text-slate-800">إضافة سجل شخص / جهة جديدة</h3>
                     <p className="text-[10px] text-slate-400 font-medium">املأ البيانات أدناه لإدخال المستخدم لقاعدة البيانات الموحدة</p>
                   </div>
                 </div>
@@ -472,7 +471,7 @@ export const PeopleManagement: React.FC = () => {
                 <div className="flex gap-2.5 pt-2">
                   <button
                     type="submit"
-                    className={`flex-1 py-2.5 rounded-2xl text-xs font-semibold text-white cursor-pointer transition-all active:scale-98 ${THEME.primary.solid} ${THEME.primary.solidHover}`}
+                    className={`flex-1 py-2.5 rounded-2xl text-xs font-medium text-white cursor-pointer transition-all active:scale-98 ${THEME.primary.solid} ${THEME.primary.solidHover}`}
                   >
                     تأكيد وإضافة السجل
                   </button>

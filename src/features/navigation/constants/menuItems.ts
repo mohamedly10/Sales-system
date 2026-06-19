@@ -2,11 +2,18 @@ import {
   Users, 
   Send,
   Inbox,
-  BarChart3
+  BarChart3,
+  LayoutGrid
 } from 'lucide-react';
 import { NavigationItem } from '../types';
 
 export const NAVIGATION_ITEMS: NavigationItem[] = [
+  {
+    id: 'mainpage',
+    label: 'الصفحة الرئيسية',
+    icon: LayoutGrid,
+    category: 'إدارة العمليات'
+  },
   {
     id: 'people',
     label: 'إدارة المستخدمين',
