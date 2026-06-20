@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -12,45 +12,37 @@ import {
   MapPin,
   Building2,
   Calendar,
-  FileText
+  FileText,
+  RefreshCw,
+  Trash2,
+  FolderOpen,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { THEME } from '../../../theme';
 import { SearchInput } from '../../../components/ui/SearchInput';
 import { Dropdown, DropdownOption } from '../../../components/ui/Dropdown';
 import { PageHeader } from '../../../components/ui/PageHeader';
-
-// 1. البيانات النموذجية لإدارة مستخدمي النظام والجهات (People Data)
-const initialPeopleData = [
-  { id: 1, name: 'أحمد فتحي الورفلي', phone: '0911234567', companyName: 'شركة الورفلي للمقاولات والاستثمار', address: 'طرابلس، حي الأندلس', status: 'Active', date: '06/15/25', notes: 'عميل ممتاز، يتعامل بالدفع الآجل المباشر ونظام الشيكات المصرفية.' },
-  { id: 2, name: 'سارة عمر بن حليم', phone: '0922345678', companyName: 'مجموعة المدار لتقنية المعلومات', address: 'بنغازي، حي الفويهات', status: 'Active', date: '06/12/25', notes: 'مفوضة المشتريات والتعاقدات الرسمية للمؤسسة.' },
-  { id: 3, name: 'عماد عبد السلام الترهوني', phone: '0943456789', companyName: 'مصنع الترهوني للصناعات الغذائية', address: 'مصراتة، المنطقة الصناعية', status: 'Suspended', date: '05/29/25', notes: 'موقوف مؤقتاً لحين تسوية المعاملات المالية ومطابقة الرصيد.' },
-  { id: 4, name: 'محمد الهادي الفيتوري', phone: '0915556677', companyName: 'فرد - وكيل مستقل', address: 'سبها، حي القرضة لمواد البناء', status: 'Inactive', date: '05/20/25', notes: 'مندوب توزيع ميداني مستقل، يتعامل نقداً (كاش) فقط.' },
-  { id: 5, name: 'ريناد الطاهر بن عثمان', phone: '0928889900', companyName: 'مصحة الطاهر التخصصية للعلاج الطبيعي', address: 'الزاوية، الطريق الساحلي الرئيسي', status: 'Active', date: '04/08/25', notes: 'تنسيق مباشر مع قسم التجهيزات والمشتريات الطبية.' },
-];
+import {
+  getPeople,
+  createPerson,
+  deletePerson,
+  PersonData,
+  CreatePersonPayload,
+} from '../api/persons';
 
 // ترجمة الحالات لكي تناسب خط الهوية الموحد وتنسيق جدول المستخدمين
 const statusTranslation: Record<string, { ar: string; class: string }> = {
-  'Active': { ar: 'نشط', class: 'bg-emerald-50 text-emerald-600 border border-emerald-100' },
-  'Inactive': { ar: 'غير نشط', class: 'bg-slate-100 text-slate-600 border border-slate-200' },
-  'Suspended': { ar: 'موقوف', class: 'bg-amber-50 text-amber-600 border border-amber-100' },
+  'active': { ar: 'نشط', class: 'bg-emerald-50 text-emerald-600 border border-emerald-100' },
+  'inactive': { ar: 'غير نشط', class: 'bg-slate-100 text-slate-600 border border-slate-200' },
+  'suspended': { ar: 'موقوف', class: 'bg-amber-50 text-amber-600 border border-amber-100' },
 };
 
 const filterOptions: DropdownOption[] = [
   { value: 'All', label: 'الكل' },
-  { value: 'Active', label: 'نشط' },
-  { value: 'Inactive', label: 'غير نشط' },
-  { value: 'Suspended', label: 'موقوف' },
+  { value: 'active', label: 'نشط' },
+  { value: 'inactive', label: 'غير نشط' },
+  { value: 'suspended', label: 'موقوف' },
 ];
-
-// Helper to get formatted date
-const getTodayFormatted = () => {
-  const d = new Date();
-  const yy = String(d.getFullYear()).slice(-2);
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${mm}/${dd}/${yy}`;
-};
 
 // مكون شارة الحالة الموائمة للهوية الموحدة
 const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
@@ -63,7 +55,9 @@ const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
 };
 
 export const PeopleManagement: React.FC = () => {
-  const [people, setPeople] = useState(initialPeopleData);
+  const [people, setPeople] = useState<PersonData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('All');
@@ -77,7 +71,24 @@ export const PeopleManagement: React.FC = () => {
   const [formAddress, setFormAddress] = useState('');
   const [formCompanyName, setFormCompanyName] = useState('');
   const [formNotes, setFormNotes] = useState('');
-  const [formStatus, setFormStatus] = useState('Active');
+  const [formStatus, setFormStatus] = useState('active');
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getPeople();
+      setPeople(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'فشل تحميل البيانات');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   // التعامل مع تحديد الصفوف (Checkbox Row Selection)
   const toggleRow = (id: number) => {
@@ -102,10 +113,10 @@ export const PeopleManagement: React.FC = () => {
     const query = searchQuery.toLowerCase();
     const matchesSearch = 
       person.name.toLowerCase().includes(query) ||
-      person.phone.includes(query) ||
-      person.companyName.toLowerCase().includes(query) ||
-      person.address.toLowerCase().includes(query) ||
-      person.notes.toLowerCase().includes(query);
+      (person.phone ?? '').includes(query) ||
+      (person.company ?? '').toLowerCase().includes(query) ||
+      (person.address ?? '').toLowerCase().includes(query) ||
+      (person.notes ?? '').toLowerCase().includes(query);
     
     const matchesFilter = statusFilter === 'All' || person.status === statusFilter;
 
@@ -113,35 +124,92 @@ export const PeopleManagement: React.FC = () => {
   });
 
   // Handle Form Submission for new person record
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName.trim() || !formPhone.trim()) return;
 
-    const newPerson = {
-      id: Date.now(),
-      name: formName,
-      phone: formPhone,
-      companyName: formCompanyName.trim() || 'فردي',
-      address: formAddress.trim() || 'غير محدد',
-      status: formStatus,
-      date: getTodayFormatted(),
-      notes: formNotes.trim() || 'لا توجد ملاحظات إضافية.'
-    };
+    try {
+      setError(null);
+      const payload: CreatePersonPayload = {
+        name: formName.trim(),
+        phone: formPhone.trim(),
+        company: formCompanyName.trim() || undefined,
+        address: formAddress.trim() || undefined,
+        status: formStatus,
+        notes: formNotes.trim() || undefined,
+      };
 
-    setPeople([newPerson, ...people]);
-    
-    // Reset form fields
-    setFormName('');
-    setFormPhone('');
-    setFormAddress('');
-    setFormCompanyName('');
-    setFormNotes('');
-    setFormStatus('Active');
-    setIsModalOpen(false);
+      await createPerson(payload);
+      
+      setFormName('');
+      setFormPhone('');
+      setFormAddress('');
+      setFormCompanyName('');
+      setFormNotes('');
+      setFormStatus('active');
+      setIsModalOpen(false);
+
+      await fetchData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'فشل إضافة السجل');
+    }
   };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deletePerson(id);
+      setSelectedRows(selectedRows.filter((rowId) => rowId !== id));
+      await fetchData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'فشل حذف السجل');
+    }
+  };
+
+  const deleteSelected = async () => {
+    try {
+      await Promise.all(selectedRows.map((id) => deletePerson(id)));
+      setSelectedRows([]);
+      await fetchData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'فشل حذف المحدد');
+    }
+  };
+
+  if (loading && people.length === 0) {
+    return (
+      <div className="w-full space-y-6" dir="rtl">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="bg-white p-5 rounded-2xl border border-slate-100 animate-pulse"
+            >
+              <div className="h-3 w-24 bg-slate-100 rounded mb-3" />
+              <div className="h-5 w-32 bg-slate-100 rounded" />
+            </div>
+          ))}
+        </div>
+        <div className="bg-white rounded-3xl border border-slate-100 p-24 flex items-center justify-center">
+          <RefreshCw size={24} className="text-slate-300 animate-spin" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-6" dir="rtl">
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-xs font-medium flex items-center justify-between">
+          <span>{error}</span>
+          <button
+            onClick={() => setError(null)}
+            className="p-1 hover:bg-red-100 rounded-lg transition-colors cursor-pointer"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
       {/* بطاقة الإحصائيات السريعة للجدول الدائري */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between font-sans">
@@ -166,7 +234,7 @@ export const PeopleManagement: React.FC = () => {
           <div>
             <span className="text-[11px] font-medium text-slate-400">المستخدمين النشطين</span>
             <h4 className="text-xl font-semibold text-slate-800 mt-1">
-              {people.filter(p => p.status === 'Active').length}
+              {people.filter(p => p.status === 'active').length}
             </h4>
           </div>
           <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
@@ -176,6 +244,24 @@ export const PeopleManagement: React.FC = () => {
       </div>
 
       <PageHeader title="قائمة السجلات والبيانات الحالية">
+        <button
+          onClick={fetchData}
+          className="flex items-center gap-1.5 px-4 py-2 border border-slate-100 bg-white text-slate-500 hover:text-slate-700 hover:bg-slate-50 text-xs font-medium rounded-2xl transition-all cursor-pointer active:scale-95"
+        >
+          <RefreshCw size={13} />
+          <span>تحديث</span>
+        </button>
+
+        {selectedRows.length > 0 && (
+          <button
+            onClick={deleteSelected}
+            className="flex items-center gap-1.5 px-4 py-2 border border-red-100 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 text-xs font-medium rounded-2xl transition-all cursor-pointer active:scale-95"
+          >
+            <Trash2 size={13} />
+            <span>حذف المحدد ({selectedRows.length})</span>
+          </button>
+        )}
+
         <button
           onClick={() => setIsModalOpen(true)}
           className={`flex items-center gap-1.5 px-4.5 py-2 ${THEME.primary.solid} ${THEME.primary.solidHover} text-white text-xs font-medium rounded-2xl transition-all active:scale-95 cursor-pointer select-none`}
@@ -227,7 +313,11 @@ export const PeopleManagement: React.FC = () => {
 
         {/* عرض للبيانات باستخدام الجدول responsive */}
         <div className="overflow-x-auto">
-          {filteredPeople.length > 0 ? (
+          {loading ? (
+            <div className="p-16 flex items-center justify-center">
+              <RefreshCw size={20} className="text-slate-300 animate-spin" />
+            </div>
+          ) : filteredPeople.length > 0 ? (
             <table className="w-full text-right border-collapse">
               <thead>
                 <tr className="bg-slate-50/50 border-b border-slate-100">
@@ -247,7 +337,7 @@ export const PeopleManagement: React.FC = () => {
                   <th className="p-4 text-xs font-medium tracking-wider text-slate-400">الحالة</th>
                   <th className="p-4 text-xs font-medium tracking-wider text-slate-400">تفاصيل / ملاحظات</th>
                   <th className="p-4 w-12 text-center text-slate-400">
-                    <Settings size={14} className="mx-auto" />
+                    إجراءات
                   </th>
                 </tr>
               </thead>
@@ -271,19 +361,25 @@ export const PeopleManagement: React.FC = () => {
                       </td>
                       <td className="p-4 text-xs font-medium text-slate-800">{row.name}</td>
                       <td className="p-4 text-xs font-medium text-slate-600 font-mono" dir="ltr">{row.phone}</td>
-                      <td className="p-4 text-xs font-medium text-slate-700">{row.companyName}</td>
+                      <td className="p-4 text-xs font-medium text-slate-700">{row.company}</td>
                       <td className="p-4 text-xs font-normal text-slate-500">{row.address}</td>
-                      <td className="p-4 text-xs font-normal text-slate-500 font-mono" dir="ltr">{row.date}</td>
+                      <td className="p-4 text-xs font-normal text-slate-500 font-mono" dir="ltr">{row.created_at?.split('T')[0] ?? '-'}</td>
                       <td className="p-4 text-right">
                         <StatusBadge status={row.status} />
                       </td>
-                      <td className="p-4 text-xs text-slate-400 truncate max-w-[200px]" title={row.notes}>
-                        {row.notes}
+                      <td className="p-4 text-xs text-slate-400 truncate max-w-[200px]" title={row.notes ?? ''}>
+                        {row.notes ?? '-'}
                       </td>
                       <td className="p-4 text-center">
-                        <button className="text-slate-400 hover:text-slate-600 p-1.5 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer">
-                          <MoreVertical size={14} className="mx-auto" />
-                        </button>
+                        <div className="flex items-center justify-center gap-1">
+                          <button
+                            onClick={() => handleDelete(row.id)}
+                            className="text-slate-400 hover:text-red-600 p-1.5 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                            title="حذف السجل"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -291,8 +387,16 @@ export const PeopleManagement: React.FC = () => {
               </tbody>
             </table>
           ) : (
-            <div className="p-12 text-center">
-              <span className="text-xs text-slate-400">لا توجد سجلات تطابق عوامل البحث المحددة.</span>
+            <div className="p-16 text-center flex flex-col items-center justify-center">
+              <div className={`w-12 h-12 rounded-full ${THEME.primary.lightBg} flex items-center justify-center ${THEME.primary.text} mb-3`}>
+                <FolderOpen size={20} />
+              </div>
+              <h4 className="text-xs font-medium text-slate-500">
+                لا توجد سجلات مطابقة لعوامل هذا التصفية
+              </h4>
+              <p className="text-[11px] text-slate-400 mt-1 max-w-xs">
+                يرجى تعديل معلمات تصفية البحث أو الضغط على زر "إضافة مستخدم" لإدراج سجل جديد.
+              </p>
             </div>
           )}
         </div>
@@ -433,21 +537,21 @@ export const PeopleManagement: React.FC = () => {
                         onChange={(e) => setFormStatus(e.target.value)}
                         className={`w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-medium focus:outline-none focus:ring-4 ${THEME.primary.ringFocus} cursor-pointer transition-all`}
                       >
-                        <option value="Active">نشط (Active)</option>
-                        <option value="Inactive">غير نشط (Inactive)</option>
-                        <option value="Suspended">موقوف (Suspended)</option>
+                        <option value="active">نشط</option>
+                        <option value="inactive">غير نشط</option>
+                        <option value="suspended">موقوف</option>
                       </select>
                     </div>
 
-                    {/* تاريخ الإضافة الافتراضي */}
+                    {/* رمز المرجع التلقائي */}
                     <div className="space-y-1">
-                      <label className="block text-[11px] font-medium text-slate-550">تاريخ الإدخال</label>
+                      <label className="block text-[11px] font-medium text-slate-550">رمز المرجع</label>
                       <div className="relative">
-                        <Calendar size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <FileText size={13} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
                         <input
                           type="text"
                           disabled
-                          value={getTodayFormatted()}
+                          value="يُحدد تلقائياً"
                           className="w-full pr-8 pl-3.5 py-2.5 bg-slate-100 border border-slate-200 rounded-2xl text-xs font-medium text-slate-400 font-mono text-center select-none"
                         />
                       </div>
