@@ -1,53 +1,78 @@
-import React, { useState } from 'react';
-import { BarChart3, Calendar, FileSpreadsheet, FileText, Search, SlidersHorizontal } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { BarChart3, Calendar, FileSpreadsheet, FileText, RefreshCw, Search, SlidersHorizontal, X } from 'lucide-react';
 import { THEME } from '../../../theme';
 import { Dropdown, DropdownOption } from '../../../components/ui/Dropdown';
 import { SearchInput } from '../../../components/ui/SearchInput';
 import { PageHeader } from '../../../components/ui/PageHeader';
-
-const peopleOptions: DropdownOption[] = [
-  { value: 'All', label: 'الكل' },
-  { value: 'أحمد فتحي الورفلي', label: 'أحمد فتحي الورفلي' },
-  { value: 'سارة عمر بن حليم', label: 'سارة عمر بن حليم' },
-  { value: 'عماد عبد السلام الترهوني', label: 'عماد عبد السلام الترهوني' },
-  { value: 'محمد الهادي الفيتوري', label: 'محمد الهادي الفيتوري' },
-  { value: 'ريناد الطاهر بن عثمان', label: 'ريناد الطاهر بن عثمان' },
-];
+import { getReports, getReportPersons, ReportItem, ReportPerson, ReportFilters } from '../api/reports';
 
 export const ReportsManagement: React.FC = () => {
+  const [reports, setReports] = useState<ReportItem[]>([]);
+  const [persons, setPersons] = useState<ReportPerson[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState('All');
-  const [typeFilter, setTypeFilter] = useState('All');
+  const [typeFilter, setTypeFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [summary, setSummary] = useState({ total_amount: 0, total_count: 0 });
 
-  interface ReportItem {
-    id: string;
-    name: string;
-    amount: number;
-    desc: string;
-  }
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const filters: ReportFilters = {
+        type: typeFilter,
+        date_from: dateFrom || undefined,
+        date_to: dateTo || undefined,
+        person_id: filter !== 'All' ? Number(filter) : undefined,
+        search: searchQuery || undefined,
+      };
 
-  const sampleReports: ReportItem[] = [
-    { id: 'RPT-001', name: 'تقرير المقبوضات الشهري', amount: 12500, desc: 'تقرير شامل لكافة المقبوضات خلال شهر يونيو يشمل المدفوعات النقدية والتحويلات البنكية' },
-    { id: 'RPT-002', name: 'تقرير المصروفات الأسبوعي', amount: 8400, desc: 'مصروفات الأسبوع الثالث من يونيو تشمل المشتريات والرواتب والمصروفات الإدارية' },
-    { id: 'RPT-003', name: 'تقرير الرصيد الدوري', amount: 4100, desc: 'الفرق بين إجمالي المقبوضات والمصروفات للفترة من 1 يونيو حتى 20 يونيو' },
+      const [reportData, personsData] = await Promise.all([
+        getReports(filters),
+        getReportPersons(),
+      ]);
+      setReports(reportData.data);
+      setSummary(reportData.summary);
+      setPersons(personsData);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'فشل تحميل التقارير');
+    } finally {
+      setLoading(false);
+    }
+  }, [typeFilter, dateFrom, dateTo, filter, searchQuery]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const peopleOptions: DropdownOption[] = [
+    { value: 'All', label: 'الكل' },
+    ...persons.map((p) => ({ value: String(p.id), label: p.name })),
   ];
 
   const typeButtons = [
-    { value: 'All', label: 'الكل' },
+    { value: 'all', label: 'الكل' },
     { value: 'exports', label: 'المصروفات' },
     { value: 'imports', label: 'المقبوضات' },
   ];
 
-  const filteredReports = sampleReports.filter((r) =>
-    searchQuery
-      ? r.name.includes(searchQuery) || r.desc.includes(searchQuery) || r.id.includes(searchQuery)
-      : true
-  );
-
   return (
     <div className="w-full space-y-6">
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-xs font-medium flex items-center justify-between">
+          <span>{error}</span>
+          <button
+            onClick={() => setError(null)}
+            className="p-1 hover:bg-red-100 rounded-lg transition-colors cursor-pointer"
+          >
+            <X size={14} />
+          </button>
+        </div>
+      )}
+
       <PageHeader title="سجل التقارير">
         <div className="flex items-center gap-2">
           <div className="relative">
@@ -103,54 +128,54 @@ export const ReportsManagement: React.FC = () => {
           />
         </div>
         <div className="flex items-center gap-1.5">
-          <button className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-[10px] font-medium rounded-xl transition-all cursor-pointer select-none">
-            <FileText size={13} />
-            PDF الكل
+          <button
+            onClick={fetchData}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-500 text-[10px] font-medium rounded-xl transition-all cursor-pointer select-none"
+          >
+            <RefreshCw size={13} />
+            <span>تحديث</span>
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 text-[10px] font-medium rounded-xl transition-all cursor-pointer select-none">
-            <FileSpreadsheet size={13} />
-            Excel الكل
-          </button>
-          <span className="text-[11px] font-medium text-slate-400 select-none">{filteredReports.length} نتيجة</span>
+          <span className="text-[11px] font-medium text-slate-400 select-none">{summary.total_count} نتيجة | {summary.total_amount.toLocaleString()} د.ل</span>
           <button className="p-1.5 border border-slate-100 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-slate-600 transition-all cursor-pointer">
             <SlidersHorizontal size={14} />
           </button>
         </div>
       </div>
 
-      {filteredReports.length > 0 ? (
+      {loading ? (
+        <div className="flex items-center justify-center p-24">
+          <RefreshCw size={24} className="text-slate-300 animate-spin" />
+        </div>
+      ) : reports.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filteredReports.map((report) => (
+          {reports.map((report) => (
             <div key={report.id} className="bg-white rounded-[1.5rem] border border-slate-100 p-5 flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-mono text-slate-400 tracking-wider">{report.id}</span>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[13px] font-semibold text-red-600 tracking-wide">{report.amount.toLocaleString()} د.ل</span>
+                  <span className="text-[10px] font-medium text-slate-400 ml-1">
+                    {report.type === 'export' ? 'صادر' : 'وارد'}
+                  </span>
+                  <span className={`text-[13px] font-semibold tracking-wide ${
+                    report.type === 'export' ? 'text-red-600' : 'text-emerald-600'
+                  }`}>
+                    {report.amount.toLocaleString()} د.ل
+                  </span>
                 </div>
               </div>
               <h3 className="text-sm font-medium text-slate-700 leading-snug">{report.name}</h3>
               <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-2">{report.desc}</p>
-              <div className="flex items-center gap-2 pt-1">
-                <button className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-[10px] font-medium rounded-xl transition-all cursor-pointer select-none">
-                  <FileText size={12} />
-                  PDF
-                </button>
-                <button className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 text-[10px] font-medium rounded-xl transition-all cursor-pointer select-none">
-                  <FileSpreadsheet size={12} />
-                  Excel
-                </button>
-              </div>
             </div>
           ))}
         </div>
       ) : (
-      <div className={`p-12 text-center border border-dashed ${THEME.neutral.borderMedium} rounded-2xl bg-white flex flex-col items-center justify-center min-h-[350px]`}>
-        <div className={`w-12 h-12 rounded-full bg-red-50 flex items-center justify-center ${THEME.primary.text} mb-4`}>
-          <BarChart3 size={24} />
+        <div className={`p-12 text-center border border-dashed ${THEME.neutral.borderMedium} rounded-2xl bg-white flex flex-col items-center justify-center min-h-[350px]`}>
+          <div className={`w-12 h-12 rounded-full bg-red-50 flex items-center justify-center ${THEME.primary.text} mb-4`}>
+            <BarChart3 size={24} />
+          </div>
+          <h3 className={`text-base font-semibold ${THEME.neutral.textDark} mb-1`}>قائمة التقارير فارغة</h3>
+          <p className="text-xs text-slate-400 max-w-xs">لا توجد تقارير مسجلة في الوقت الحالي داخل إدارة التقارير.</p>
         </div>
-        <h3 className={`text-base font-semibold ${THEME.neutral.textDark} mb-1`}>قائمة التقارير فارغة</h3>
-        <p className="text-xs text-slate-400 max-w-xs">لا توجد تقارير مسجلة في الوقت الحالي داخل إدارة التقارير.</p>
-      </div>
       )}
     </div>
   );
