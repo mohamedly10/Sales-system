@@ -2,6 +2,7 @@ import { apiRequest } from '../../../config/api';
 
 export interface ReportItem {
   id: string;
+  date: string;
   name: string;
   amount: number;
   desc: string;

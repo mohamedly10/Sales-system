@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BarChart3, Calendar, FileSpreadsheet, FileText, RefreshCw, Search, SlidersHorizontal, X } from 'lucide-react';
+import { BarChart3, Calendar, FileSpreadsheet, FileText, Printer, RefreshCw, Search, SlidersHorizontal, X } from 'lucide-react';
 import { THEME } from '../../../theme';
 import { Dropdown, DropdownOption } from '../../../components/ui/Dropdown';
 import { SearchInput } from '../../../components/ui/SearchInput';
 import { PageHeader } from '../../../components/ui/PageHeader';
 import { getReports, getReportPersons, ReportItem, ReportPerson, ReportFilters } from '../api/reports';
+import { ReportPrintView } from './ReportPrintView';
 
 export const ReportsManagement: React.FC = () => {
   const [reports, setReports] = useState<ReportItem[]>([]);
@@ -17,6 +18,24 @@ export const ReportsManagement: React.FC = () => {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [summary, setSummary] = useState({ total_amount: 0, total_count: 0 });
+  const [isPrinting, setIsPrinting] = useState(false);
+
+  const handlePrint = useCallback(() => {
+    setIsPrinting(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isPrinting) return;
+    const timer = setTimeout(() => {
+      window.print();
+    }, 200);
+    const afterPrint = () => setIsPrinting(false);
+    window.addEventListener('afterprint', afterPrint);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('afterprint', afterPrint);
+    };
+  }, [isPrinting]);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -135,6 +154,14 @@ export const ReportsManagement: React.FC = () => {
             <RefreshCw size={13} />
             <span>تحديث</span>
           </button>
+          <button
+            onClick={handlePrint}
+            disabled={reports.length === 0}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-500 text-[10px] font-medium rounded-xl transition-all cursor-pointer select-none disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <Printer size={13} />
+            <span>طباعة PDF</span>
+          </button>
           <span className="text-[11px] font-medium text-slate-400 select-none">{summary.total_count} نتيجة | {summary.total_amount.toLocaleString()} د.ل</span>
           <button className="p-1.5 border border-slate-100 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-slate-600 transition-all cursor-pointer">
             <SlidersHorizontal size={14} />
@@ -176,6 +203,14 @@ export const ReportsManagement: React.FC = () => {
           <h3 className={`text-base font-semibold ${THEME.neutral.textDark} mb-1`}>قائمة التقارير فارغة</h3>
           <p className="text-xs text-slate-400 max-w-xs">لا توجد تقارير مسجلة في الوقت الحالي داخل إدارة التقارير.</p>
         </div>
+      )}
+
+      {isPrinting && (
+        <ReportPrintView
+          reports={reports}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+        />
       )}
     </div>
   );

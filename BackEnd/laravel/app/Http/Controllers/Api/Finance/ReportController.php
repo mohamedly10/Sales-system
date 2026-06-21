@@ -38,6 +38,7 @@ class ReportController extends Controller
             $items = $items->concat($query->get()->map(function ($export) {
                 return [
                     'id' => $export->code,
+                    'date' => $export->date->format('Y-m-d'),
                     'name' => 'صادر - ' . ($export->person?->name ?? 'غير محدد'),
                     'amount' => (float) $export->amount * -1,
                     'desc' => $export->reason . ($export->note ? ' | ' . $export->note : ''),
@@ -64,6 +65,7 @@ class ReportController extends Controller
             $items = $items->concat($query->get()->map(function ($import) {
                 return [
                     'id' => $import->code,
+                    'date' => $import->date->format('Y-m-d'),
                     'name' => 'وارد - ' . ($import->person?->name ?? 'غير محدد'),
                     'amount' => (float) $import->amount,
                     'desc' => $import->reason . ($import->note ? ' | ' . $import->note : ''),
