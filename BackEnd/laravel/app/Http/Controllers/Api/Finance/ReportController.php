@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api\Finance;
 
+use App\Exports\ReportsExport;
 use App\Http\Controllers\Controller;
 use App\Models\Finance\Export;
 use App\Models\Finance\Import;
 use App\Models\Parties\Person;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
@@ -93,5 +95,13 @@ class ReportController extends Controller
         return response()->json([
             'data' => Person::select('id', 'name')->orderBy('name')->get(),
         ]);
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(
+            new ReportsExport($request),
+            'تقرير-حركة-الصادر-والوارد.xlsx'
+        );
     }
 }

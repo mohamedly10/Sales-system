@@ -51,3 +51,15 @@ export async function getReportPersons(): Promise<ReportPerson[]> {
   const res = await apiRequest<{ data: ReportPerson[] }>('/reports/persons');
   return res.data;
 }
+
+export function getReportsExportUrl(filters: ReportFilters): string {
+  const params = new URLSearchParams();
+  if (filters?.type && filters.type !== 'all') params.set('type', filters.type);
+  if (filters?.date_from) params.set('date_from', filters.date_from);
+  if (filters?.date_to) params.set('date_to', filters.date_to);
+  if (filters?.person_id) params.set('person_id', String(filters.person_id));
+  if (filters?.search) params.set('search', filters.search);
+
+  const qs = params.toString();
+  return qs ? `/api/reports/export?${qs}` : '/api/reports/export';
+}

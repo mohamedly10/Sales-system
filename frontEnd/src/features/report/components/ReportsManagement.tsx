@@ -4,7 +4,7 @@ import { THEME } from '../../../theme';
 import { Dropdown, DropdownOption } from '../../../components/ui/Dropdown';
 import { SearchInput } from '../../../components/ui/SearchInput';
 import { PageHeader } from '../../../components/ui/PageHeader';
-import { getReports, getReportPersons, ReportItem, ReportPerson, ReportFilters } from '../api/reports';
+import { getReports, getReportPersons, getReportsExportUrl, ReportItem, ReportPerson, ReportFilters } from '../api/reports';
 import { ReportPrintView } from './ReportPrintView';
 
 export const ReportsManagement: React.FC = () => {
@@ -166,6 +166,15 @@ export const ReportsManagement: React.FC = () => {
           >
             <Printer size={13} />
             <span>طباعة PDF</span>
+          </button>
+<button
+            onClick={() => window.open(getReportsExportUrl({ type: typeFilter, date_from: dateFrom || undefined, date_to: dateTo || undefined, person_id: filter !== 'All' ? Number(filter) : undefined, search: searchQuery || undefined }), '_blank')}
+            disabled={reports.length === 0 || filter === 'All'}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-500 text-[10px] font-medium rounded-xl transition-all cursor-pointer select-none disabled:opacity-40 disabled:cursor-not-allowed"
+            title={filter === 'All' ? 'يجب اختيار شخص للتصدير' : undefined}
+          >
+            <FileSpreadsheet size={13} />
+            <span>Excel</span>
           </button>
           <span className="text-[11px] font-medium text-slate-400 select-none">{summary.total_count} نتيجة | {summary.total_amount.toLocaleString()} د.ل</span>
           <button className="p-1.5 border border-slate-100 hover:bg-slate-50 rounded-lg text-slate-400 hover:text-slate-600 transition-all cursor-pointer">
