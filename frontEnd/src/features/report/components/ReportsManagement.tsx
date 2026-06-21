@@ -20,6 +20,10 @@ export const ReportsManagement: React.FC = () => {
   const [summary, setSummary] = useState({ total_amount: 0, total_count: 0 });
   const [isPrinting, setIsPrinting] = useState(false);
 
+  const selectedPersonName = filter !== 'All'
+    ? persons.find((p) => String(p.id) === filter)?.name || ''
+    : '';
+
   const handlePrint = useCallback(() => {
     setIsPrinting(true);
   }, []);
@@ -156,8 +160,9 @@ export const ReportsManagement: React.FC = () => {
           </button>
           <button
             onClick={handlePrint}
-            disabled={reports.length === 0}
+            disabled={reports.length === 0 || filter === 'All'}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-500 text-[10px] font-medium rounded-xl transition-all cursor-pointer select-none disabled:opacity-40 disabled:cursor-not-allowed"
+            title={filter === 'All' ? 'يجب اختيار شخص للطباعة' : undefined}
           >
             <Printer size={13} />
             <span>طباعة PDF</span>
@@ -210,6 +215,7 @@ export const ReportsManagement: React.FC = () => {
           reports={reports}
           dateFrom={dateFrom}
           dateTo={dateTo}
+          companyName={selectedPersonName}
         />
       )}
     </div>

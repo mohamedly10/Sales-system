@@ -5,14 +5,14 @@ interface ReportPrintViewProps {
   reports: ReportItem[];
   dateFrom: string;
   dateTo: string;
-  companyName?: string;
+  companyName: string;
 }
 
 export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
   reports,
   dateFrom,
   dateTo,
-  companyName = 'شركة الأمل التجارية',
+  companyName,
 }) => {
   const totalImports = reports
     .filter((r) => r.type === 'import')
@@ -37,12 +37,19 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
   const refMonth = dateFrom ? dateFrom.split('-')[1] : '01';
   const referenceNumber = `REF-${refYear}-${refMonth}`;
 
+  const today = new Date();
+  const printDate = `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
+
   return (
     <div className="report-print-wrapper">
       <style>{`
         @page {
           size: A4;
           margin: 20mm 15mm;
+        }
+
+        *, *::before, *::after {
+          box-sizing: border-box;
         }
 
         .report-print-wrapper {
@@ -71,10 +78,13 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
             top: 0;
             left: 0;
             width: 100%;
-            font-family: 'Arial', 'Tahoma', sans-serif;
+            font-family: 'Cairo', sans-serif;
             background-color: #ffffff;
-            color: #000000;
+            color: #333333;
             direction: rtl;
+            line-height: 1.6;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
           }
 
           .no-print {
@@ -84,14 +94,16 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
 
         .report-header {
           text-align: center;
-          border-bottom: 2px solid #000000;
-          padding-bottom: 15px;
+          border-bottom: 2px solid #333;
+          padding-bottom: 10px;
           margin-bottom: 25px;
         }
 
         .report-header h2 {
           margin: 0;
           font-size: 20pt;
+          font-weight: 700;
+          color: #222;
         }
 
         .meta-table {
@@ -102,7 +114,7 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
 
         .meta-table td {
           border: none;
-          padding: 6px 0;
+          padding: 4px 0;
           font-size: 11pt;
           width: 50%;
         }
@@ -111,39 +123,59 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
           text-align: left;
         }
 
+        .meta-table strong {
+          font-weight: 700;
+          color: #555;
+        }
+
         table.data-table {
           width: 100%;
           border-collapse: collapse;
-          margin-bottom: 25px;
+          margin-bottom: 30px;
         }
 
-        table.data-table th,
-        table.data-table td {
-          border: 1px solid #000000;
-          padding: 10px;
+        table.data-table th, table.data-table td {
+          border: 1px solid #444;
+          padding: 10px 12px;
           text-align: center;
-          font-size: 10.5pt;
+          font-size: 11pt;
+        }
+
+        table.data-table tr {
+          page-break-inside: avoid;
         }
 
         table.data-table th {
-          background-color: #f2f2f2;
-          font-weight: bold;
+          background-color: #f4f4f4;
+          font-weight: 700;
+          font-size: 11.5pt;
+          color: #222;
         }
 
         table.data-table tfoot td {
-          font-weight: bold;
+          font-weight: 600;
           background-color: #fafafa;
         }
 
         table.data-table tfoot tr.final-row td {
           background-color: #eeeeee;
-          font-size: 11.5pt;
-          border-top: 2px solid #000000;
+          font-size: 12pt;
+          font-weight: 700;
+          border-top: 2px solid #222;
         }
 
         .text-left {
           text-align: left !important;
-          padding-left: 15px !important;
+          padding-left: 20px !important;
+        }
+
+        .report-footer {
+          margin-top: 40px;
+          text-align: center;
+          font-size: 9pt;
+          color: #777;
+          border-top: 1px dashed #ccc;
+          padding-top: 10px;
         }
       `}</style>
 
@@ -206,6 +238,10 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
           </tr>
         </tfoot>
       </table>
+
+      <div className="report-footer">
+        تم إصدار هذا التقرير آلياً عبر النظام - تاريخ الطباعة: {printDate}
+      </div>
     </div>
   );
 };
