@@ -13,3 +13,4 @@ Route::get('reports', [App\Http\Controllers\Api\Finance\ReportController::class,
 Route::get('reports/persons', [App\Http\Controllers\Api\Finance\ReportController::class, 'persons']);
 
 Route::get('reports/export', [App\Http\Controllers\Api\Finance\ReportController::class, 'export']);
+Route::get('stats', [App\Http\Controllers\Api\Finance\ReportController::class, 'stats']);

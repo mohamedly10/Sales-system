@@ -8,6 +8,7 @@ use App\Models\Finance\Export;
 use App\Models\Finance\Import;
 use App\Models\Parties\Person;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
@@ -103,5 +104,26 @@ class ReportController extends Controller
             new ReportsExport($request),
             'تقرير-حركة-الصادر-والوارد.xlsx'
         );
+    }
+
+    public function stats()
+    {
+        $totalPersons = Person::count();
+        $totalExports = Export::count();
+        $totalExportsAmount = (float) Export::sum('amount');
+        $totalImports = Import::count();
+        $totalImportsAmount = (float) Import::sum('amount');
+        $todayOperations = Export::whereDate('date', today())->count()
+                         + Import::whereDate('date', today())->count();
+
+        return response()->json([
+            'total_persons' => $totalPersons,
+            'total_exports' => $totalExports,
+            'total_exports_amount' => $totalExportsAmount,
+            'total_imports' => $totalImports,
+            'total_imports_amount' => $totalImportsAmount,
+            'balance' => $totalImportsAmount - $totalExportsAmount,
+            'today_operations' => $todayOperations,
+        ]);
     }
 }

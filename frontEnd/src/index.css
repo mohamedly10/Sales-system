@@ -1,14 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Monadi';
+  src: url('./assets/fonts/Monadi.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --font-sans: "Readex Pro", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Readex Pro", "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-monadi: "Monadi", sans-serif;
 }
 
 body {
-  font-family: var(--font-sans);
+  font-family: var(--font-monadi);
   background-color: #fafafa;
   color: #171717;
 }
