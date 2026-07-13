@@ -53,7 +53,8 @@ COPY --from=composer /app/vendor /app/vendor
 COPY --from=node /app/public/build /app/public/build
 COPY . .
 
-RUN composer dump-autoload
+# التعديل هنا: منع تشغيل سكربتات لارافيل أثناء البناء
+RUN composer dump-autoload --optimize --no-scripts
 
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
