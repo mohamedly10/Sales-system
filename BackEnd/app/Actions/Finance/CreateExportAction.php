@@ -3,6 +3,7 @@
 namespace App\Actions\Finance;
 
 use App\Models\Finance\Export;
+use App\Models\Parties\Person;
 
 class CreateExportAction
 {
@@ -10,7 +11,11 @@ class CreateExportAction
     {
         $data['code'] = $this->generateCode();
 
-        return Export::create($data);
+        $export = Export::create($data);
+
+        Person::find($data['person_id'])->decrement('balance', $data['amount']);
+
+        return $export;
     }
 
     private function generateCode(): string

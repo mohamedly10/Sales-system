@@ -159,7 +159,7 @@ export const ExportsManagement: React.FC = () => {
 
       await fetchData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'فشل تسجيل الصادر');
+      setError(err instanceof Error ? err.message : 'فشل تسجيل الخروج');
     }
   };
 
@@ -169,7 +169,7 @@ export const ExportsManagement: React.FC = () => {
       setSelectedRows(selectedRows.filter((rowId) => rowId !== id));
       await fetchData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'فشل حذف الصادر');
+      setError(err instanceof Error ? err.message : 'فشل حذف الخروج');
     }
   };
 
@@ -227,7 +227,7 @@ export const ExportsManagement: React.FC = () => {
         <div className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between font-sans">
           <div>
             <span className="text-[11px] font-medium text-slate-400">
-              إجمالي الصادرات والمدفوعات
+              إجمالي الخروج والمدفوعات
             </span>
             <h4 className="text-xl font-medium text-slate-800 mt-1 font-mono">
               {totalAmount.toLocaleString()} د.ل
@@ -269,7 +269,7 @@ export const ExportsManagement: React.FC = () => {
         </div>
       </div>
 
-      <PageHeader title="سجل الصادرات المالية الحالي في المنظومة">
+      <PageHeader title="سجل الخروج المالية الحالي في المنظومة">
         <button
           onClick={fetchData}
           className="flex items-center gap-1.5 px-4 py-2 border border-slate-100 bg-white text-slate-500 hover:text-slate-700 hover:bg-slate-50 text-xs font-medium rounded-2xl transition-all cursor-pointer active:scale-95"
@@ -293,7 +293,7 @@ export const ExportsManagement: React.FC = () => {
           className={`flex items-center gap-1.5 px-4.5 py-2 ${THEME.primary.solid} ${THEME.primary.solidHover} text-white text-xs font-medium rounded-2xl transition-all active:scale-95 cursor-pointer select-none`}
         >
           <Plus size={14} />
-          <span>إضافة صادر مالي</span>
+          <span>إضافة خروج مالي</span>
         </button>
       </PageHeader>
 
@@ -415,7 +415,7 @@ export const ExportsManagement: React.FC = () => {
                       <td className="p-4">
                         <div className="flex items-center gap-2">
                           <span className="inline-flex px-2 py-0.5 bg-red-50 text-red-700 rounded-md text-[10px] font-medium">
-                            صادرات
+                            خروج
                           </span>
                           <span className="text-xs font-medium font-mono text-red-600">
                             -
@@ -465,7 +465,7 @@ export const ExportsManagement: React.FC = () => {
                 لا توجد سجلات مطابقة لعوامل هذا التصفية
               </h4>
               <p className="text-[11px] text-slate-400 mt-1 max-w-xs">
-                يرجى تعديل معلمات تصفية البحث أو الضغط على زر "إضافة صادر"
+                يرجى تعديل معلمات تصفية البحث أو الضغط على زر "إضافة خروج"
                 لتسجيل معاملة مالية جديدة.
               </p>
             </div>
@@ -500,7 +500,7 @@ export const ExportsManagement: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-slate-800">
-                      تسجيل قيد صادر مالي جديد
+                      تسجيل قيد خروج مالي جديد
                     </h3>
                     <p className="text-[10px] text-slate-400">
                       توثيق وخروج المبالغ النقدية والمصالح الفردية
@@ -671,7 +671,7 @@ export const ExportsManagement: React.FC = () => {
 
                   <div className="space-y-1">
                     <label className="block text-[11px] font-medium text-slate-550 flex items-center justify-between">
-                      <span>القيمة المالية (المبلغ المالي الصادر)</span>
+                      <span>القيمة المالية (المبلغ المالي الخروج)</span>
                       <span className="text-red-500 text-[10px]">
                         * حقل مطلوب
                       </span>
@@ -736,7 +736,7 @@ export const ExportsManagement: React.FC = () => {
                     type="submit"
                     className={`px-5 py-2.5 ${THEME.primary.solid} ${THEME.primary.solidHover} text-white text-xs font-medium rounded-2xl transition-all shadow-[0_4px_12px_${THEME.primary.shadowSoft}] active:scale-95 cursor-pointer`}
                   >
-                    تأكيد إدخال الصادر
+                    تأكيد إدخال الخروج
                   </button>
                 </div>
               </form>

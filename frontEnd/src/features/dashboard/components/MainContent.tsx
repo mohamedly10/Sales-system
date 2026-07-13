@@ -41,9 +41,9 @@ export const MainContent: React.FC<MainContentProps> = ({ activeId }) => {
       case 'reports':
         return 'التقارير';
       case 'exports':
-        return 'إدارة الصادرات';
+        return 'إدارة الخروج';
       case 'imports':
-        return 'إدارة الواردات';
+        return 'إدارة الدخول';
       case 'store':
         return 'متجري';
       case 'integration':
@@ -71,9 +71,9 @@ export const MainContent: React.FC<MainContentProps> = ({ activeId }) => {
       case 'people':
         return 'لوحة تطويرية متكاملة لإدارة وتتبع سجلات الموظفين، والجهات الخارجية، والعملاء، مع حلول تصفية ذكية وبحث فوري لتسهيل الإجراءات.';
       case 'exports':
-        return 'قسم مخصص لإدارة ومتابعة كافة الصادرات والبيانات الخارجة بشكل منظم وتفصيلي.';
+        return 'قسم مخصص لإدارة ومتابعة كافة الخروج والبيانات الخارجة بشكل منظم وتفصيلي.';
       case 'imports':
-        return 'نافذة متابعة جميع الشحنات الرسمية والواردات المسجلة بداخل النظام بمرونة متناهية.';
+        return 'نافذة متابعة جميع الشحنات الرسمية والدخول المسجلة بداخل النظام بمرونة متناهية.';
       case 'reports':
         return 'مركز التقارير والإحصائيات لرصد مؤشرات الأداء الحيوية وتدفق البيانات العامة للعمليات.';
       default:

@@ -8,6 +8,8 @@ class DeleteExportAction
 {
     public function execute(Export $export): ?bool
     {
+        $export->person->increment('balance', $export->amount);
+
         return $export->delete();
     }
 }

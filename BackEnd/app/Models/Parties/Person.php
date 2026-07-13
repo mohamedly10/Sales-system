@@ -21,8 +21,16 @@ class Person extends Model
         'company',
         'address',
         'status',
+        'balance',
         'notes',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'balance' => 'decimal:2',
+        ];
+    }
 
     public function exports(): HasMany
     {

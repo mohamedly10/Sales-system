@@ -24,6 +24,20 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
 
   const netBalance = totalImports - totalExports;
 
+  const sortedReports = [...reports].sort((a, b) => a.date.localeCompare(b.date));
+
+  const runningBalances: number[] = [];
+  let balance = 0;
+  for (const r of sortedReports) {
+    balance += r.amount;
+    runningBalances.push(balance);
+  }
+
+  const getBalance = (reportId: string) => {
+    const idx = sortedReports.findIndex(r => r.id === reportId);
+    return idx !== -1 ? runningBalances[idx] : 0;
+  };
+
   const formatDate = (d: string) => {
     if (!d) return '';
     const parts = d.split('-');
@@ -180,7 +194,7 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
       `}</style>
 
       <div className="report-header">
-        <h2>تقرير حركة الصادر والوارد</h2>
+        <h2>تقرير حركة الدخول والخروج</h2>
       </div>
 
       <table className="meta-table">
@@ -203,38 +217,42 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
             <th>التاريخ</th>
             <th>البيان / الوصف</th>
             <th>نوع المعاملة</th>
-            <th>الوارد</th>
-            <th>الصادر</th>
+            <th>دخول</th>
+            <th>خروج</th>
+            <th>الرصيد</th>
           </tr>
         </thead>
         <tbody>
-          {reports.map((report) => (
+          {sortedReports.map((report) => (
             <tr key={report.id}>
               <td>{report.id}</td>
               <td>{formatDate(report.date)}</td>
               <td>{report.desc || report.name}</td>
-              <td>{report.type === 'import' ? 'وارد' : 'صادر'}</td>
+              <td>{report.type === 'import' ? 'دخول' : 'خروج'}</td>
               <td>{report.type === 'import' ? report.amount.toLocaleString() : '-'}</td>
               <td>{report.type === 'export' ? Math.abs(report.amount).toLocaleString() : '-'}</td>
+              <td>{getBalance(report.id).toLocaleString()}</td>
             </tr>
           ))}
         </tbody>
         <tfoot>
           <tr>
-            <td colSpan={4} className="text-left">مجموع الوارد:</td>
+            <td colSpan={4} className="text-left">مجموع المدين:</td>
             <td>{totalImports > 0 ? totalImports.toLocaleString() : '-'}</td>
+            <td>-</td>
             <td>-</td>
           </tr>
           <tr>
-            <td colSpan={4} className="text-left">مجموع الصادر:</td>
+            <td colSpan={4} className="text-left">مجموع الدائن:</td>
             <td>-</td>
             <td>{totalExports > 0 ? totalExports.toLocaleString() : '-'}</td>
+            <td>-</td>
           </tr>
           <tr className="final-row">
             <td colSpan={4} className="text-left">
-              الرصيد الصافي (مجموع الوارد - مجموع الصادر):
+              الرصيد الصافي (مجموع الدخول - مجموع الخروج):
             </td>
-            <td colSpan={2}>{netBalance.toLocaleString()}</td>
+            <td colSpan={3}>{netBalance.toLocaleString()}</td>
           </tr>
         </tfoot>
       </table>

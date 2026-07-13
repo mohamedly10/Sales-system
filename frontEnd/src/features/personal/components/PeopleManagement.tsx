@@ -335,6 +335,7 @@ export const PeopleManagement: React.FC = () => {
                   <th className="p-4 text-xs font-medium tracking-wider text-slate-400">العنوان</th>
                   <th className="p-4 text-xs font-medium tracking-wider text-slate-400">تاريخ الإضافة</th>
                   <th className="p-4 text-xs font-medium tracking-wider text-slate-400">الحالة</th>
+                  <th className="p-4 text-xs font-medium tracking-wider text-slate-400">الرصيد</th>
                   <th className="p-4 text-xs font-medium tracking-wider text-slate-400">تفاصيل / ملاحظات</th>
                   <th className="p-4 w-12 text-center text-slate-400">
                     إجراءات
@@ -366,6 +367,11 @@ export const PeopleManagement: React.FC = () => {
                       <td className="p-4 text-xs font-normal text-slate-500 font-mono" dir="ltr">{row.created_at?.split('T')[0] ?? '-'}</td>
                       <td className="p-4 text-right">
                         <StatusBadge status={row.status} />
+                      </td>
+                      <td className="p-4 text-xs font-medium font-mono" dir="ltr">
+                        <span className={row.balance >= 0 ? 'text-emerald-600' : 'text-red-500'}>
+                          {row.balance.toLocaleString('ar-LY')} د.ل
+                        </span>
                       </td>
                       <td className="p-4 text-xs text-slate-400 truncate max-w-[200px]" title={row.notes ?? ''}>
                         {row.notes ?? '-'}

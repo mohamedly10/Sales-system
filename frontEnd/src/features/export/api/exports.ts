@@ -31,7 +31,7 @@ export async function createExport(
 ): Promise<ExportData> {
   const res = await apiRequest<{ data: ExportData }>('/exports', {
     method: 'POST',
-    body: JSON.stringify(payload),
+    data: payload,
   });
   return res.data;
 }

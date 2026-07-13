@@ -36,7 +36,7 @@ import { getPeople, PersonData } from '../../personal/api/persons';
 const filterOptions: DropdownOption[] = [
   { value: 'All', label: 'الكل' },
   { value: 'WithAttachment', label: 'بمرفقات رسمية' },
-  { value: 'WithoutAttachment', label: 'وارد بدون مرفق' },
+  { value: 'WithoutAttachment', label: 'دخول بدون مرفق' },
 ];
 
 export const ImportsManagement: React.FC = () => {
@@ -159,7 +159,7 @@ export const ImportsManagement: React.FC = () => {
 
       await fetchData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'فشل تسجيل الوارد');
+      setError(err instanceof Error ? err.message : 'فشل تسجيل الدخول');
     }
   };
 
@@ -169,7 +169,7 @@ export const ImportsManagement: React.FC = () => {
       setSelectedRows(selectedRows.filter((rowId) => rowId !== id));
       await fetchData();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'فشل حذف الوارد');
+      setError(err instanceof Error ? err.message : 'فشل حذف الدخول');
     }
   };
 
@@ -227,7 +227,7 @@ export const ImportsManagement: React.FC = () => {
         <div className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between font-sans">
           <div>
             <span className="text-[11px] font-medium text-slate-400">
-              إجمالي الواردات والمقبوضات
+              إجمالي الدخول والمقبوضات
             </span>
             <h4 className="text-xl font-medium text-slate-800 mt-1 font-mono">
               {totalAmount.toLocaleString()} د.ل
@@ -267,7 +267,7 @@ export const ImportsManagement: React.FC = () => {
         </div>
       </div>
 
-      <PageHeader title="سجل الواردات المالية الحالي في المنظومة">
+      <PageHeader title="سجل الدخول المالية الحالي في المنظومة">
         <button
           onClick={fetchData}
           className="flex items-center gap-1.5 px-4 py-2 border border-slate-100 bg-white text-slate-500 hover:text-slate-700 hover:bg-slate-50 text-xs font-medium rounded-2xl transition-all cursor-pointer active:scale-95"
@@ -291,7 +291,7 @@ export const ImportsManagement: React.FC = () => {
           className={`flex items-center gap-1.5 px-4.5 py-2 ${THEME.primary.solid} ${THEME.primary.solidHover} text-white text-xs font-medium rounded-2xl transition-all active:scale-95 cursor-pointer select-none`}
         >
           <Plus size={14} />
-          <span>إضافة وارد مالي</span>
+          <span>إضافة دخول مالي</span>
         </button>
       </PageHeader>
 
@@ -410,7 +410,7 @@ export const ImportsManagement: React.FC = () => {
                       <td className="p-4">
                         <div className="flex items-center gap-2">
                           <span className="inline-flex px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md text-[10px] font-medium">
-                            واردات
+                            دخول
                           </span>
                           <span className="text-xs font-medium font-mono text-emerald-600">
                             +
@@ -460,7 +460,7 @@ export const ImportsManagement: React.FC = () => {
                 لا توجد سجلات مطابقة لعوامل هذا التصفية
               </h4>
               <p className="text-[11px] text-slate-400 mt-1 max-w-xs">
-                يرجى تعديل معلمات تصفية البحث أو الضغط على زر "إضافة وارد"
+                يرجى تعديل معلمات تصفية البحث أو الضغط على زر "إضافة دخول"
                 لتسجيل معاملة مالية جديدة.
               </p>
             </div>
@@ -495,7 +495,7 @@ export const ImportsManagement: React.FC = () => {
                   </div>
                   <div>
                     <h3 className="text-sm font-medium text-slate-800">
-                      تسجيل قيد وارد مالي جديد
+                      تسجيل قيد دخول مالي جديد
                     </h3>
                     <p className="text-[10px] text-slate-400">
                       توثيق ودخول المبالغ النقدية والمقبوضات الفردية
@@ -553,7 +553,7 @@ export const ImportsManagement: React.FC = () => {
                 <div className="space-y-3.5">
                   <div className="space-y-1" ref={dropdownRef}>
                     <label className="block text-[11px] font-medium text-slate-500 flex items-center justify-between">
-                      <span>الشخص / الجهة المصدرة للوارد</span>
+                      <span>الشخص / الجهة المصدرة للدخول</span>
                       <span className="text-red-500 text-[10px]">
                         * حقل مطلوب
                       </span>
@@ -649,7 +649,7 @@ export const ImportsManagement: React.FC = () => {
 
                   <div className="space-y-1">
                     <label className="block text-[11px] font-medium text-slate-500 flex items-center justify-between">
-                      <span>سبب الوارد</span>
+                      <span>سبب الدخول</span>
                       <span className="text-red-500 text-[10px]">
                         * حقل مطلوب
                       </span>
@@ -657,7 +657,7 @@ export const ImportsManagement: React.FC = () => {
                     <input
                       type="text"
                       required
-                      placeholder="اكتب سبب الوارد (مثال: تحصيل فاتورة، مقبوضات تجارية...)"
+                      placeholder="اكتب سبب الدخول (مثال: تحصيل فاتورة، مقبوضات تجارية...)"
                       value={formReason}
                       onChange={(e) => setFormReason(e.target.value)}
                       className={`w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-medium focus:outline-none focus:ring-4 ${THEME.primary.ringFocus} transition-all`}
@@ -666,7 +666,7 @@ export const ImportsManagement: React.FC = () => {
 
                   <div className="space-y-1">
                     <label className="block text-[11px] font-medium text-slate-550 flex items-center justify-between">
-                      <span>القيمة المالية (المبلغ المالي الوارد)</span>
+                      <span>القيمة المالية (المبلغ المالي الدخول)</span>
                       <span className="text-red-500 text-[10px]">
                         * حقل مطلوب
                       </span>
@@ -731,7 +731,7 @@ export const ImportsManagement: React.FC = () => {
                     type="submit"
                     className={`px-5 py-2.5 ${THEME.primary.solid} ${THEME.primary.solidHover} text-white text-xs font-medium rounded-2xl transition-all shadow-[0_4px_12px_${THEME.primary.shadowSoft}] active:scale-95 cursor-pointer`}
                   >
-                    تأكيد إدخال الوارد
+                    تأكيد إدخال الدخول
                   </button>
                 </div>
               </form>

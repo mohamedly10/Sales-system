@@ -31,7 +31,7 @@ export async function createImport(
 ): Promise<ImportData> {
   const res = await apiRequest<{ data: ImportData }>('/imports', {
     method: 'POST',
-    body: JSON.stringify(payload),
+    data: payload,
   });
   return res.data;
 }

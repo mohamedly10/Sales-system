@@ -22,13 +22,13 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   },
   {
     id: 'exports',
-    label: 'إدارة الصادرات',
+    label: 'إدارة الخروج',
     icon: Send,
     category: 'إدارة العمليات'
   },
   {
     id: 'imports',
-    label: 'إدارة الواردات',
+    label: 'إدارة الدخول',
     icon: Inbox,
     category: 'إدارة العمليات'
   },

@@ -42,7 +42,7 @@ class ReportController extends Controller
                 return [
                     'id' => $export->code,
                     'date' => $export->date->format('Y-m-d'),
-                    'name' => 'صادر - ' . ($export->person?->name ?? 'غير محدد'),
+                    'name' => 'خروج - ' . ($export->person?->name ?? 'غير محدد'),
                     'amount' => (float) $export->amount * -1,
                     'desc' => $export->reason . ($export->note ? ' | ' . $export->note : ''),
                     'type' => 'export',
@@ -69,7 +69,7 @@ class ReportController extends Controller
                 return [
                     'id' => $import->code,
                     'date' => $import->date->format('Y-m-d'),
-                    'name' => 'وارد - ' . ($import->person?->name ?? 'غير محدد'),
+                    'name' => 'دخول - ' . ($import->person?->name ?? 'غير محدد'),
                     'amount' => (float) $import->amount,
                     'desc' => $import->reason . ($import->note ? ' | ' . $import->note : ''),
                     'type' => 'import',
@@ -102,7 +102,7 @@ class ReportController extends Controller
     {
         return Excel::download(
             new ReportsExport($request),
-            'تقرير-حركة-الصادر-والوارد.xlsx'
+            'تقرير-حركة-الدخول-والخروج.xlsx'
         );
     }
 

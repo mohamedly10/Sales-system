@@ -53,7 +53,7 @@ class ReportsExport implements FromCollection, WithHeadings, WithMapping, WithSt
                     'date' => $export->date->format('Y-m-d'),
                     'person' => $export->person?->name ?? 'غير محدد',
                     'desc' => $export->reason . ($export->note ? ' | ' . $export->note : ''),
-                    'type' => 'صادر',
+                    'type' => 'خروج',
                     'amount' => (float) $export->amount * -1,
                 ];
             }));
@@ -80,7 +80,7 @@ class ReportsExport implements FromCollection, WithHeadings, WithMapping, WithSt
                     'date' => $import->date->format('Y-m-d'),
                     'person' => $import->person?->name ?? 'غير محدد',
                     'desc' => $import->reason . ($import->note ? ' | ' . $import->note : ''),
-                    'type' => 'وارد',
+                    'type' => 'دخول',
                     'amount' => (float) $import->amount,
                 ];
             }));

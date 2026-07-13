@@ -3,6 +3,7 @@
 namespace App\Actions\Finance;
 
 use App\Models\Finance\Import;
+use App\Models\Parties\Person;
 
 class CreateImportAction
 {
@@ -10,7 +11,11 @@ class CreateImportAction
     {
         $data['code'] = $this->generateCode();
 
-        return Import::create($data);
+        $import = Import::create($data);
+
+        Person::find($data['person_id'])->increment('balance', $data['amount']);
+
+        return $import;
     }
 
     private function generateCode(): string

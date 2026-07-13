@@ -17,6 +17,7 @@ class PersonResource extends JsonResource
             'company' => $this->company,
             'address' => $this->address,
             'status' => $this->status,
+            'balance' => $this->balance,
             'notes' => $this->notes,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

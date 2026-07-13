@@ -8,6 +8,7 @@ export interface PersonData {
   company: string | null;
   address: string | null;
   status: string;
+  balance: number;
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -32,7 +33,7 @@ export async function createPerson(
 ): Promise<PersonData> {
   const res = await apiRequest<{ data: PersonData }>('/persons', {
     method: 'POST',
-    body: JSON.stringify(payload),
+    data: payload,
   });
   return res.data;
 }
