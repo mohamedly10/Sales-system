@@ -1,0 +1,30 @@
+services:
+  frontend:
+    build: ./frontEnd
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend-nginx
+
+  backend-php:
+    build: ./BackEnd
+    volumes:
+      - sqlite_data:/app/database
+    healthcheck:
+      test: ["CMD", "php", "-v"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  backend-nginx:
+    image: nginx:alpine
+    ports:
+      - "8000:80"
+    volumes:
+      - ./BackEnd/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      backend-php:
+        condition: service_healthy
+
+volumes:
+  sqlite_data:
