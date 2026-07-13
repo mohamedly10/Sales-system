@@ -16,7 +16,8 @@ RUN npm install
 COPY resources/ resources/
 RUN npm run build
 
-FROM php:8.3-fpm-alpine
+# تم التعديل هنا ليتوافق مع متطلبات مشروعك (PHP 8.4)
+FROM php:8.4-fpm-alpine
 
 RUN set -eux \
     && apk add --no-cache \
@@ -53,7 +54,6 @@ COPY --from=composer /app/vendor /app/vendor
 COPY --from=node /app/public/build /app/public/build
 COPY . .
 
-# التعديل هنا: منع تشغيل سكربتات لارافيل أثناء البناء
 RUN composer dump-autoload --optimize --no-scripts
 
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
