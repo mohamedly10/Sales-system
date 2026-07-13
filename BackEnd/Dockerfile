@@ -50,14 +50,15 @@ RUN set -eux \
 
 WORKDIR /app
 
+# إصلاح المشكلة: نسخ أداة Composer نفسها لتصبح متاحة في هذه المرحلة
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
 COPY --from=composer /app/vendor /app/vendor
 COPY --from=node /app/public/build /app/public/build
 COPY . .
 
-RUN composer dump-autoload \
-    && cp .env.example .env \
-    && php artisan key:generate \
-    && php artisan optimize
+# تشغيل توليد الملفات بأمان وبدون تجميد الإعدادات
+RUN composer dump-autoload
 
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
