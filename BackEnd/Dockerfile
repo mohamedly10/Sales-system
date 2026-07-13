@@ -61,5 +61,5 @@ RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-EXPOSE 9000
-ENTRYPOINT ["docker-entrypoint.sh"]
+EXPOSE 8000
+CMD php artisan serve --host=0.0.0.0 --port=8000
