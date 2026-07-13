@@ -1,7 +1,8 @@
 FROM composer:latest AS composer
 WORKDIR /app
-COPY composer.json composer.lock ./
+COPY composer.json composer.lock* ./
 RUN composer install \
+    --ignore-platform-reqs \
     --no-dev \
     --no-interaction \
     --no-progress \
