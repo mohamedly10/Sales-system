@@ -26,11 +26,9 @@ RUN set -eux \
         freetype \
         icu \
         oniguruma \
-        libpq \
     && apk add --no-cache --virtual .build-deps \
         $PHPIZE_DEPS \
         libzip-dev \
-        postgresql-dev \
         libpng-dev \
         libjpeg-turbo-dev \
         freetype-dev \
@@ -38,7 +36,7 @@ RUN set -eux \
         oniguruma-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
-        pdo_pgsql \
+        pdo_mysql \
         bcmath \
         gd \
         zip \
@@ -50,14 +48,11 @@ RUN set -eux \
 
 WORKDIR /app
 
-# إصلاح المشكلة: نسخ أداة Composer نفسها لتصبح متاحة في هذه المرحلة
 COPY --from=composer /usr/bin/composer /usr/bin/composer
-
 COPY --from=composer /app/vendor /app/vendor
 COPY --from=node /app/public/build /app/public/build
 COPY . .
 
-# تشغيل توليد الملفات بأمان وبدون تجميد الإعدادات
 RUN composer dump-autoload
 
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
