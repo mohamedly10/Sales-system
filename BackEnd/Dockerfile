@@ -3,10 +3,11 @@ WORKDIR /app
 COPY composer.json composer.lock* ./
 RUN composer install \
     --ignore-platform-reqs \
+    --no-scripts \
+    --no-autoloader \
     --no-dev \
     --no-interaction \
-    --no-progress \
-    --optimize-autoloader
+    --no-progress
 
 FROM node:22-alpine AS node
 WORKDIR /app
