@@ -14,17 +14,19 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
   dateTo,
   companyName,
 }) => {
-  const totalImports = reports
+  const safeReports = reports ?? [];
+
+  const totalImports = safeReports
     .filter((r) => r.type === 'import')
     .reduce((sum, r) => sum + r.amount, 0);
 
-  const totalExports = reports
+  const totalExports = safeReports
     .filter((r) => r.type === 'export')
     .reduce((sum, r) => sum + Math.abs(r.amount), 0);
 
   const netBalance = totalImports - totalExports;
 
-  const sortedReports = [...reports].sort((a, b) => a.date.localeCompare(b.date));
+  const sortedReports = [...safeReports].sort((a, b) => a.date.localeCompare(b.date));
 
   const runningBalances: number[] = [];
   let balance = 0;

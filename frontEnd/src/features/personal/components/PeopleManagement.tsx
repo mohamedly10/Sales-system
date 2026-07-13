@@ -78,7 +78,7 @@ export const PeopleManagement: React.FC = () => {
     setError(null);
     try {
       const data = await getPeople();
-      setPeople(data);
+      setPeople(data ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'فشل تحميل البيانات');
     } finally {
@@ -109,7 +109,9 @@ export const PeopleManagement: React.FC = () => {
   };
 
   // معالجة البحث والفلترة (Searching & Filtering)
-  const filteredPeople = people.filter((person) => {
+  const safePeople = people ?? [];
+
+  const filteredPeople = safePeople.filter((person) => {
     const query = searchQuery.toLowerCase();
     const matchesSearch = 
       person.name.toLowerCase().includes(query) ||
@@ -234,7 +236,7 @@ export const PeopleManagement: React.FC = () => {
           <div>
             <span className="text-[11px] font-medium text-slate-400">المستخدمين النشطين</span>
             <h4 className="text-xl font-semibold text-slate-800 mt-1">
-              {people.filter(p => p.status === 'active').length}
+              {(people ?? []).filter(p => p.status === 'active').length}
             </h4>
           </div>
           <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">

@@ -22,7 +22,9 @@ export const ReportsManagement: React.FC = () => {
 
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
-  const sortedAsc = [...reports].sort((a, b) => a.date.localeCompare(b.date));
+  const safeReports = reports ?? [];
+
+  const sortedAsc = [...safeReports].sort((a, b) => a.date.localeCompare(b.date));
   const runningBalances: number[] = [];
   let bal = 0;
   for (const r of sortedAsc) {
@@ -30,8 +32,8 @@ export const ReportsManagement: React.FC = () => {
     runningBalances.push(bal);
   }
 
-  const totalImports = reports.filter(r => r.type === 'import').reduce((s, r) => s + r.amount, 0);
-  const totalExports = reports.filter(r => r.type === 'export').reduce((s, r) => s + Math.abs(r.amount), 0);
+  const totalImports = safeReports.filter(r => r.type === 'import').reduce((s, r) => s + r.amount, 0);
+  const totalExports = safeReports.filter(r => r.type === 'export').reduce((s, r) => s + Math.abs(r.amount), 0);
   const netBalance = totalImports - totalExports;
 
   const getRunningBalance = (id: string) => {
@@ -90,7 +92,7 @@ export const ReportsManagement: React.FC = () => {
         getReports(filters),
         getReportPersons(),
       ]);
-      setReports(reportData.data);
+      setReports(reportData.data ?? []);
       setSummary(reportData.summary);
       setPersons(personsData);
     } catch (err) {

@@ -72,8 +72,8 @@ export const ExportsManagement: React.FC = () => {
         getExports(),
         getPeople(),
       ]);
-      setExports(exportsData);
-      setPersons(peopleData);
+      setExports(exportsData ?? []);
+      setPersons(peopleData ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'فشل تحميل البيانات');
     } finally {
@@ -108,7 +108,9 @@ export const ExportsManagement: React.FC = () => {
     }
   };
 
-  const filteredExports = exports.filter((item) => {
+  const safeExports = exports ?? [];
+
+  const filteredExports = safeExports.filter((item) => {
     const query = searchQuery.toLowerCase();
     const personName = item.person?.name ?? '';
     const matchesSearch =
@@ -128,7 +130,7 @@ export const ExportsManagement: React.FC = () => {
     return matchesSearch && matchesFilter;
   });
 
-  const filteredPeopleOptions = persons.filter((person) =>
+  const filteredPeopleOptions = (persons ?? []).filter((person) =>
     person.name.toLowerCase().includes(personSearchQuery.toLowerCase()),
   );
 
@@ -260,7 +262,7 @@ export const ExportsManagement: React.FC = () => {
               حركات بمرفقات رسمية
             </span>
             <h4 className="text-xl font-medium text-slate-800 mt-1 font-mono">
-              {exports.filter((e) => e.note && e.note !== '').length} معتمدة
+              {(exports ?? []).filter((e) => e.note && e.note !== '').length} معتمدة
             </h4>
           </div>
           <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
