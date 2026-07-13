@@ -9,7 +9,6 @@ RUN composer install \
 
 FROM node:22-alpine AS node
 WORKDIR /app
-# تم التعديل هنا لتجاوز غياب ملف lock
 COPY package*.json vite.config.js ./
 RUN npm install
 COPY resources/ resources/
@@ -25,10 +24,11 @@ RUN set -eux \
         freetype \
         icu \
         oniguruma \
-        libpq-dev \
+        libpq \
     && apk add --no-cache --virtual .build-deps \
         $PHPIZE_DEPS \
-        zip-dev \
+        libzip-dev \
+        postgresql-dev \
         libpng-dev \
         libjpeg-turbo-dev \
         freetype-dev \
