@@ -9,8 +9,9 @@ RUN composer install \
 
 FROM node:22-alpine AS node
 WORKDIR /app
-COPY package.json package-lock.json vite.config.js ./
-RUN npm ci
+# تم التعديل هنا لتجاوز غياب ملف lock
+COPY package*.json vite.config.js ./
+RUN npm install
 COPY resources/ resources/
 RUN npm run build
 
@@ -24,6 +25,7 @@ RUN set -eux \
         freetype \
         icu \
         oniguruma \
+        libpq-dev \
     && apk add --no-cache --virtual .build-deps \
         $PHPIZE_DEPS \
         zip-dev \
@@ -34,7 +36,7 @@ RUN set -eux \
         oniguruma-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
-        pdo_sqlite \
+        pdo_pgsql \
         bcmath \
         gd \
         zip \
