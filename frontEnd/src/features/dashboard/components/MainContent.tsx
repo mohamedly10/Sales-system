@@ -56,6 +56,8 @@ export const MainContent: React.FC<MainContentProps> = ({ activeId }) => {
         return 'مركز المساعدة';
       case 'logout':
         return 'تسجيل الخروج';
+      case 'upgrades':
+        return 'الترقيات والخطط';
       default:
         return id;
     }
@@ -91,6 +93,7 @@ export const MainContent: React.FC<MainContentProps> = ({ activeId }) => {
       case 'settings': return <SettingsIcon size={24} />;
       case 'help': return <HelpCircle size={24} />;
       case 'logout': return <LogOut size={24} />;
+      case 'upgrades': return <Sparkles size={24} />;
       default: return <LayoutGrid size={24} />;
     }
   };

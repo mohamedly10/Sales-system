@@ -153,15 +153,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <User size={13} className="text-slate-400" />
                 <span>الملف الشخصي</span>
               </button>
-              <button className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-50 transition-colors text-right" onClick={() => setProfileOpen(false)}>
-                <Sparkles size={13} className="text-slate-400" />
-                <span>الترقيات والخطط</span>
-              </button>
-              <div className="h-px bg-slate-50 my-1" />
-              <button className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-rose-600 hover:bg-rose-50/50 transition-colors text-right" onClick={() => { setProfileOpen(false); onActiveIdChange('logout'); }}>
-                <LogOut size={13} />
-                <span>تسجيل الخروج</span>
-              </button>
             </div>
           )}
         </div>

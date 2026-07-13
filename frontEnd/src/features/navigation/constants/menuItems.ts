@@ -3,7 +3,7 @@ import {
   Send,
   Inbox,
   BarChart3,
-  LayoutGrid
+  LayoutGrid,
 } from 'lucide-react';
 import { NavigationItem } from '../types';
 
@@ -37,7 +37,7 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     label: 'التقارير',
     icon: BarChart3,
     category: 'إدارة العمليات'
-  }
+  },
 ];
 
 
