@@ -612,13 +612,12 @@ export const ExportsManagement: React.FC = () => {
                   <div className="space-y-1">
                     <label className="block text-[11px] font-medium text-slate-500 flex items-center justify-between">
                       <span>البيان</span>
-                      <span className="text-red-500 text-[10px]">
-                        * حقل مطلوب
+                      <span className="text-slate-400 text-[10px]">
+                        (اختياري)
                       </span>
                     </label>
                     <input
                       type="text"
-                      required
                       placeholder="اكتب البيان (مثال: سداد فاتورة، سلفة تشغيلية...)"
                       value={formReason}
                       onChange={(e) => setFormReason(e.target.value)}
