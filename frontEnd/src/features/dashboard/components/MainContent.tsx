@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { 
   LayoutGrid, 
   ShoppingCart, 
@@ -24,11 +25,9 @@ import { ImportsManagement } from '../../import/components/ImportsManagement';
 import { ReportsManagement } from '../../report/components/ReportsManagement';
 import { MainPage } from '../../mainpage/components/MainPage';
 
-interface MainContentProps {
-  activeId: string;
-}
-
-export const MainContent: React.FC<MainContentProps> = ({ activeId }) => {
+export const MainContent: React.FC = () => {
+  const location = useLocation();
+  const activeId = location.pathname.split('/')[1] || 'dashboard';
   const [isRefreshing, setIsRefreshing] = useState(false);
   const getArabicName = (id: string) => {
     switch (id) {
@@ -98,31 +97,7 @@ export const MainContent: React.FC<MainContentProps> = ({ activeId }) => {
     }
   };
 
-  // Dynamically render operations features
-  const renderFeatureContent = () => {
-    switch (activeId) {
-      case 'mainpage':
-        return <MainPage />;
-      case 'people':
-        return <PeopleManagement />;
-      case 'exports':
-        return <ExportsManagement />;
-      case 'imports':
-        return <ImportsManagement />;
-      case 'reports':
-        return <ReportsManagement />;
-      default:
-        return (
-          <div className="p-12 text-center border border-dashed border-slate-200 rounded-2xl bg-white flex flex-col items-center justify-center min-h-[350px]">
-            <div className={`w-12 h-12 rounded-full ${THEME.primary.lightBg} flex items-center justify-center ${THEME.primary.text} mb-4`}>
-              {getPageIcon(activeId)}
-            </div>
-            <h3 className="text-base font-semibold text-slate-800 mb-1">صفحة {activeName} فارغة</h3>
-            <p className="text-xs text-slate-400 max-w-xs font-medium">لا توجد بيانات أو عناصر لعرضها في الوقت الحالي داخل هذا القسم.</p>
-          </div>
-        );
-    }
-  };
+  // Generic empty state if Outlet has nothing (won't typically happen with routes defined)
 
   return (
     <div className={`flex-1 min-h-screen overflow-y-auto flex flex-col ${THEME.neutral.appBackground}`}>
@@ -202,7 +177,7 @@ export const MainContent: React.FC<MainContentProps> = ({ activeId }) => {
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.25 }}
           >
-            {renderFeatureContent()}
+            <Outlet />
           </motion.div>
         </AnimatePresence>
       </main>

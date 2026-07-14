@@ -1,13 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Users, Inbox, Send, Plus, DollarSign, Activity, Scale } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { THEME } from '../../../theme';
 import { PageHeader } from '../../../components/ui/PageHeader';
 import { getStats, Stats } from '../api/stats';
 
-const formatAmount = (n: number) =>
-  n.toLocaleString('ar-LY') + ' د.ل';
+const formatAmount = (n: number | string | undefined | null) =>
+  (Number(n) || 0).toLocaleString('ar-LY') + ' د.ل';
 
 export const MainPage: React.FC = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,13 +30,13 @@ export const MainPage: React.FC = () => {
   useEffect(() => { fetchStats(); }, [fetchStats]);
 
   const cards = stats ? [
-    { icon: Users, title: 'المستخدمين', label: 'إجمالي المستخدمين', value: String(stats.total_persons) },
-    { icon: Inbox, title: 'المقبوضات', label: 'عدد المقبوضات', value: String(stats.total_imports) },
-    { icon: DollarSign, title: 'قيمة المقبوضات', label: 'إجمالي قيمة المقبوضات', value: formatAmount(stats.total_imports_amount) },
-    { icon: Send, title: 'المصروفات', label: 'عدد المصروفات', value: String(stats.total_exports) },
-    { icon: DollarSign, title: 'قيمة المصروفات', label: 'إجمالي قيمة المصروفات', value: formatAmount(stats.total_exports_amount) },
-    { icon: Scale, title: 'الرصيد', label: 'الرصيد الحالي', value: formatAmount(stats.balance) },
-    { icon: Activity, title: 'عمليات اليوم', label: 'عدد العمليات اليوم', value: String(stats.today_operations) },
+    { icon: Users, title: 'المستخدمين', label: 'إجمالي المستخدمين', value: String(stats.total_persons), path: '/people' },
+    { icon: Inbox, title: 'المقبوضات', label: 'عدد المقبوضات', value: String(stats.total_imports), path: '/imports' },
+    { icon: DollarSign, title: 'قيمة المقبوضات', label: 'إجمالي قيمة المقبوضات', value: formatAmount(stats.total_imports_amount), path: '/imports' },
+    { icon: Send, title: 'المصروفات', label: 'عدد المصروفات', value: String(stats.total_exports), path: '/exports' },
+    { icon: DollarSign, title: 'قيمة المصروفات', label: 'إجمالي قيمة المصروفات', value: formatAmount(stats.total_exports_amount), path: '/exports' },
+    { icon: Scale, title: 'الرصيد', label: 'الرصيد الحالي', value: formatAmount(stats.balance), path: '/reports' },
+    { icon: Activity, title: 'عمليات اليوم', label: 'عدد العمليات اليوم', value: String(stats.today_operations), path: '/dashboard' },
   ] : [];
 
   return (
@@ -52,7 +54,11 @@ export const MainPage: React.FC = () => {
           cards.map((card) => {
             const Icon = card.icon;
             return (
-              <div key={card.title} className="w-[260px] h-[280px] bg-white rounded-[2rem] p-6 flex flex-col justify-between font-sans box-border border border-slate-100">
+              <div 
+                key={card.title} 
+                onClick={() => card.path && navigate(card.path)}
+                className={`w-[260px] h-[280px] bg-white rounded-[2rem] p-6 flex flex-col justify-between font-sans box-border border border-slate-100 ${card.path ? 'cursor-pointer hover:border-slate-300 hover:shadow-sm transition-all' : ''}`}
+              >
                 <div className="flex justify-center mt-2">
                   <div className="w-[110px] h-[110px] flex items-center justify-center bg-white rounded-3xl border-[1.5px] border-slate-100">
                     <Icon size={44} stroke="#dc2626" strokeWidth={1.5} />

@@ -1,16 +1,13 @@
 import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { NAVIGATION_ITEMS } from '../constants/menuItems';
 import { THEME } from '../../../theme';
 
-interface BottomNavBarProps {
-  activeId: string;
-  onActiveIdChange: (id: string) => void;
-}
+export const BottomNavBar: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const activeId = location.pathname.split('/')[1] || 'dashboard';
 
-export const BottomNavBar: React.FC<BottomNavBarProps> = ({
-  activeId,
-  onActiveIdChange,
-}) => {
   return (
     <nav 
       id="bottom-navigation"
@@ -23,7 +20,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
         return (
           <button
             key={item.id}
-            onClick={() => onActiveIdChange(item.id)}
+            onClick={() => navigate('/' + item.id)}
             className="flex flex-col items-center justify-center flex-1 h-full py-1.5 focus:outline-none transition-all cursor-pointer relative"
           >
             {/* Active Indicator Line at the top of bottom card */}

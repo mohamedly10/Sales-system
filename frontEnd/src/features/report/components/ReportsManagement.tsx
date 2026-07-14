@@ -108,7 +108,7 @@ export const ReportsManagement: React.FC = () => {
 
   const peopleOptions: DropdownOption[] = [
     { value: 'All', label: 'الكل' },
-    ...persons.map((p) => ({ value: String(p.id), label: p.name })),
+    ...(persons || []).map((p) => ({ value: String(p.id), label: p.name })),
   ];
 
   const typeButtons = [

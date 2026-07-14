@@ -11,20 +11,20 @@ import {
 import { SidebarItem } from './SidebarItem';
 import { NAVIGATION_ITEMS } from '../constants/menuItems';
 import { THEME } from '../../../theme';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface SidebarProps {
-  activeId: string;
-  onActiveIdChange: (id: string) => void;
   isCollapsed: boolean;
   setIsCollapsed: (collapsed: boolean) => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
-  activeId,
-  onActiveIdChange,
   isCollapsed,
   setIsCollapsed,
 }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const activeId = location.pathname.split('/')[1] || 'dashboard';
   const [profileOpen, setProfileOpen] = useState(false);
 
   // Group items by category dynamically
@@ -102,7 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     item={item}
                     isActive={activeId === item.id}
                     isCollapsed={isCollapsed}
-                    onClick={() => onActiveIdChange(item.id)}
+                    onClick={() => navigate('/' + item.id)}
                   />
                 ))}
               </div>
