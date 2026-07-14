@@ -23,7 +23,7 @@ class PartiesSeeder extends Seeder
     public function run(CreatePersonAction $createPerson): void
     {
         $existingCount = Person::count();
-        $target = 10;
+        $target = count(static::$persons);
 
         if ($existingCount >= $target) {
             return;

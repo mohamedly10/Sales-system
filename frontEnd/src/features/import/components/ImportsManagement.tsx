@@ -33,11 +33,7 @@ import {
 } from '../api/imports';
 import { getPeople, PersonData } from '../../personal/api/persons';
 
-const filterOptions: DropdownOption[] = [
-  { value: 'All', label: 'الكل' },
-  { value: 'WithAttachment', label: 'بمرفقات رسمية' },
-  { value: 'WithoutAttachment', label: 'دخول بدون مرفق' },
-];
+
 
 export const ImportsManagement: React.FC = () => {
   const [imports, setImports] = useState<ImportData[]>([]);
@@ -46,7 +42,6 @@ export const ImportsManagement: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [attachmentFilter, setAttachmentFilter] = useState('All');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -120,14 +115,7 @@ export const ImportsManagement: React.FC = () => {
       item.amount.toString().includes(query) ||
       item.date.includes(query);
 
-    let matchesFilter = true;
-    if (attachmentFilter === 'WithAttachment') {
-      matchesFilter = item.note !== null && item.note !== '';
-    } else if (attachmentFilter === 'WithoutAttachment') {
-      matchesFilter = item.note === null || item.note === '';
-    }
-
-    return matchesSearch && matchesFilter;
+    return matchesSearch;
   });
 
   const filteredPeopleOptions = (persons ?? []).filter((person) =>
@@ -254,19 +242,7 @@ export const ImportsManagement: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between font-sans">
-          <div>
-            <span className="text-[11px] font-medium text-slate-400">
-              حركات بمرفقات رسمية
-            </span>
-            <h4 className="text-xl font-medium text-slate-800 mt-1 font-mono">
-              {(imports ?? []).filter((e) => e.note && e.note !== '').length} معتمدة
-            </h4>
-          </div>
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-            <Paperclip size={18} />
-          </div>
-        </div>
+
       </div>
 
       <PageHeader title="سجل الدخول المالية الحالي في المنظومة">
@@ -305,13 +281,6 @@ export const ImportsManagement: React.FC = () => {
               onSearchChange={setSearchQuery}
               placeholder="ابحث حسب الرمز، اسم المصدر، القيمة أو البيان..."
               className="max-w-xs"
-            />
-
-            <Dropdown
-              options={filterOptions}
-              selectedValue={attachmentFilter}
-              onChange={setAttachmentFilter}
-              placeholder="مستوى الاعتماد"
             />
           </div>
 
@@ -364,9 +333,7 @@ export const ImportsManagement: React.FC = () => {
                   <th className="p-4 text-xs font-medium tracking-wider text-slate-400">
                     النوع / القيمة
                   </th>
-                  <th className="p-4 text-xs font-medium tracking-wider text-slate-400">
-                    الحالة
-                  </th>
+
                   <th className="p-4 w-12 text-center text-slate-400">
                     إجراءات
                   </th>
@@ -421,19 +388,7 @@ export const ImportsManagement: React.FC = () => {
                         </div>
                       </td>
 
-                      <td className="p-4">
-                        {row.note ? (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-medium">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                            معتمد
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-[11px] font-medium">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                            قيد الانتظار
-                          </span>
-                        )}
-                      </td>
+
 
                       <td className="p-4 text-center">
                         <div className="flex items-center justify-center gap-1">
@@ -651,7 +606,7 @@ export const ImportsManagement: React.FC = () => {
 
                   <div className="space-y-1">
                     <label className="block text-[11px] font-medium text-slate-500 flex items-center justify-between">
-                      <span>سبب الدخول</span>
+                      <span>البيان</span>
                       <span className="text-red-500 text-[10px]">
                         * حقل مطلوب
                       </span>
@@ -659,7 +614,7 @@ export const ImportsManagement: React.FC = () => {
                     <input
                       type="text"
                       required
-                      placeholder="اكتب سبب الدخول (مثال: تحصيل فاتورة، مقبوضات تجارية...)"
+                      placeholder="اكتب البيان (مثال: تحصيل فاتورة، مقبوضات تجارية...)"
                       value={formReason}
                       onChange={(e) => setFormReason(e.target.value)}
                       className={`w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-medium focus:outline-none focus:ring-4 ${THEME.primary.ringFocus} transition-all`}
@@ -690,35 +645,7 @@ export const ImportsManagement: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-1">
-                    <label className="block text-[11px] font-medium text-slate-550 flex items-center justify-between">
-                      <span>ملاحظات</span>
-                      <span className="text-slate-400 text-[10px]">
-                        اختياري
-                      </span>
-                    </label>
-                    <textarea
-                      placeholder="أضف ملاحظات إضافية إن وجدت..."
-                      value={formDescription}
-                      onChange={(e) => setFormDescription(e.target.value)}
-                      rows={2.5}
-                      className={`w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs font-medium focus:outline-none focus:ring-4 ${THEME.primary.ringFocus} transition-all resize-none leading-relaxed text-slate-700`}
-                    />
-                  </div>
 
-                  <div className="space-y-1.5">
-                    <label className="block text-[11px] font-medium text-slate-500">
-                      مرفق إيصال التحصيل أو المستند القانوني (اختياري)
-                    </label>
-                    <div className="border-2 border-dashed rounded-2xl p-4 text-center border-slate-200 bg-slate-50/20">
-                      <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-2">
-                        <Upload size={14} />
-                      </div>
-                      <p className="text-[11px] font-medium text-slate-400">
-                        رفع المرفقات قيد التفعيل
-                      </p>
-                    </div>
-                  </div>
                 </div>
 
                 <div className="flex items-center justify-end gap-2.5 pt-3.5 border-t border-slate-100">

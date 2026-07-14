@@ -16,7 +16,7 @@ class Export extends Model
         'person_id',
         'amount',
         'reason',
-        'note',
+
         'date',
     ];
 

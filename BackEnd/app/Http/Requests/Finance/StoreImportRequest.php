@@ -17,7 +17,7 @@ class StoreImportRequest extends FormRequest
             'person_id' => ['required', 'integer', 'exists:persons,id'],
             'amount' => ['required', 'numeric', 'min:0'],
             'reason' => ['required', 'string', 'max:255'],
-            'note' => ['nullable', 'string'],
+
             'date' => ['required', 'date'],
         ];
     }

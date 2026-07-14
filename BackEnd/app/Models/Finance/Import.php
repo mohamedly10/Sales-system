@@ -16,7 +16,7 @@ class Import extends Model
         'person_id',
         'amount',
         'reason',
-        'note',
+
         'date',
     ];
 

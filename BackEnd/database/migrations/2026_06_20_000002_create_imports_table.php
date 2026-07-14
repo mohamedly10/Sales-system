@@ -14,7 +14,7 @@ return new class extends Migration
             $table->unsignedBigInteger('person_id');
             $table->decimal('amount', 12, 2);
             $table->string('reason');
-            $table->text('note')->nullable();
+
             $table->date('date');
             $table->timestamps();
         });

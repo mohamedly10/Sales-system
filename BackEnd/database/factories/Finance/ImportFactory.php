@@ -22,7 +22,7 @@ class ImportFactory extends Factory
             'person_id' => Person::inRandomOrder()->first()?->id ?? 1,
             'amount' => fake()->randomFloat(2, 500, 50000),
             'reason' => static::$reasons[array_rand(static::$reasons)],
-            'note' => fake()->optional(0.5)->sentence(),
+
             'date' => fake()->dateTimeBetween('-3 months', 'now')->format('Y-m-d'),
         ];
     }

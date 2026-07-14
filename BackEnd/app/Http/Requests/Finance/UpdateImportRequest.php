@@ -17,7 +17,7 @@ class UpdateImportRequest extends FormRequest
             'person_id' => ['sometimes', 'integer', 'exists:persons,id'],
             'amount' => ['sometimes', 'numeric', 'min:0'],
             'reason' => ['sometimes', 'string', 'max:255'],
-            'note' => ['nullable', 'string'],
+
             'date' => ['sometimes', 'date'],
         ];
     }

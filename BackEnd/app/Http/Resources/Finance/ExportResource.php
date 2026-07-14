@@ -17,7 +17,7 @@ class ExportResource extends JsonResource
             'person' => PersonResource::make($this->whenLoaded('person')),
             'amount' => $this->amount,
             'reason' => $this->reason,
-            'note' => $this->note,
+
             'date' => $this->date,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

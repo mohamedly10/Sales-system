@@ -16,7 +16,11 @@ class PersonController extends Controller
 {
     public function index()
     {
-        return new PersonCollection(Person::paginate());
+        return new PersonCollection(
+            Person::withSum('imports', 'amount')
+                  ->withSum('exports', 'amount')
+                  ->paginate()
+        );
     }
 
     public function store(StorePersonRequest $request, CreatePersonAction $action)
@@ -28,6 +32,7 @@ class PersonController extends Controller
 
     public function show(Person $person)
     {
+        $person->loadSum('imports', 'amount')->loadSum('exports', 'amount');
         return PersonResource::make($person);
     }
 
