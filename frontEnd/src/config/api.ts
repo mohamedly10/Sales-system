@@ -1,7 +1,8 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
-const BASE_URL = '/api';
-
+// Use VITE_API_URL from environment variables if it exists (useful for Dokploy),
+// otherwise fallback to the relative '/api' path.
+const BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 const apiClient = axios.create({
   baseURL: BASE_URL,

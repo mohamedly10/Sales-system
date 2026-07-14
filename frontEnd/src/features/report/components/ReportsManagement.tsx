@@ -93,7 +93,7 @@ export const ReportsManagement: React.FC = () => {
         getReportPersons(),
       ]);
       setReports(reportData.data ?? []);
-      setSummary(reportData.summary);
+      setSummary(reportData.summary || { total_amount: 0, total_count: 0 });
       setPersons(personsData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'فشل تحميل التقارير');
