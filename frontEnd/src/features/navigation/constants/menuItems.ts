@@ -9,7 +9,7 @@ import { NavigationItem } from '../types';
 
 export const NAVIGATION_ITEMS: NavigationItem[] = [
   {
-    id: 'mainpage',
+    id: 'dashboard',
     label: 'الصفحة الرئيسية',
     icon: LayoutGrid,
     category: 'إدارة العمليات'
