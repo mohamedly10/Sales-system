@@ -41,9 +41,7 @@ export const MainPage: React.FC = () => {
 
   return (
     <div className="w-full space-y-6">
-      <PageHeader title="نظرة عامة">
 
-      </PageHeader>
 
       <div className="flex flex-wrap gap-6">
         {loading ? (
@@ -54,8 +52,8 @@ export const MainPage: React.FC = () => {
           cards.map((card) => {
             const Icon = card.icon;
             return (
-              <div 
-                key={card.title} 
+              <div
+                key={card.title}
                 onClick={() => card.path && navigate(card.path)}
                 className={`w-[260px] h-[280px] bg-white rounded-[2rem] p-6 flex flex-col justify-between font-sans box-border border border-slate-100 ${card.path ? 'cursor-pointer hover:border-slate-300 hover:shadow-sm transition-all' : ''}`}
               >
