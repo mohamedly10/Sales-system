@@ -31,11 +31,11 @@ export const MainPage: React.FC = () => {
 
   const cards = stats ? [
     { icon: Users, title: 'المستخدمين', label: 'إجمالي المستخدمين', value: String(stats.total_persons), path: '/people' },
-    { icon: Inbox, title: 'المقبوضات', label: 'عدد المقبوضات', value: String(stats.total_imports), path: '/imports' },
-    { icon: DollarSign, title: 'قيمة المقبوضات', label: 'إجمالي قيمة المقبوضات', value: formatAmount(stats.total_imports_amount), path: '/imports' },
-    { icon: Send, title: 'المصروفات', label: 'عدد المصروفات', value: String(stats.total_exports), path: '/exports' },
-    { icon: DollarSign, title: 'قيمة المصروفات', label: 'إجمالي قيمة المصروفات', value: formatAmount(stats.total_exports_amount), path: '/exports' },
-    { icon: Scale, title: 'الرصيد', label: 'الرصيد الحالي', value: formatAmount(stats.balance), path: '/reports' },
+    { icon: Inbox, title: 'الدخول', label: 'عدد الدخول', value: String(stats.total_imports), path: '/imports' },
+
+    { icon: Send, title: 'الخروج', label: 'عدد الخروج', value: String(stats.total_exports), path: '/exports' },
+
+
     { icon: Activity, title: 'عمليات اليوم', label: 'عدد العمليات اليوم', value: String(stats.today_operations), path: '/dashboard' },
   ] : [];
 
@@ -43,7 +43,7 @@ export const MainPage: React.FC = () => {
     <div className="w-full space-y-6">
 
 
-      <div className="flex flex-wrap gap-6">
+      <div className="flex flex-wrap justify-center sm:justify-start gap-6">
         {loading ? (
           <p className="text-slate-500 text-lg">جاري التحميل...</p>
         ) : error ? (
