@@ -101,67 +101,7 @@ export const MainContent: React.FC = () => {
 
   return (
     <div className={`flex-1 min-h-screen overflow-y-auto flex flex-col ${THEME.neutral.appBackground}`}>
-      {/* Header Bar - Floating island matching the Sidebar style */}
-      <header className="mx-4 md:mx-12 mt-4 bg-white border border-slate-100 rounded-[1.8rem] h-20 flex items-center justify-between px-6 sticky top-4 z-20 select-none">
-        <div className="flex items-center gap-3">
-          {/* Mobile Only: Brand Logo to match Sidebar Concept */}
-          <div className="md:hidden flex items-center gap-2">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`w-9 h-9 ${THEME.primary.lightBg} rounded-xl flex items-center justify-center flex-shrink-0`}
-            >
-              <div className={`w-5 h-5 rounded-md ${THEME.primary.solid} flex items-center justify-center text-white text-[10px] font-semibold font-mono`}>
-                S
-              </div>
-            </motion.div>
-          </div>
 
-          {/* Breadcrumb Path */}
-          <div className="flex items-center gap-2 text-xs md:text-sm text-slate-400">
-            <span className="hover:text-slate-600 transition-colors cursor-pointer font-semibold">بوابة المنظومة</span>
-            <span className="text-slate-200">/</span>
-            <span className={`text-slate-600 uppercase font-black tracking-wide text-[10px] md:text-xs ${THEME.primary.lightBg} ${THEME.primary.text} rounded-lg px-2.5 py-1`}>
-              {activeName}
-            </span>
-          </div>
-        </div>
-
-        {/* Elegant Action Elements and Controls */}
-        <div className="flex items-center gap-2.5">
-          {/* Status Glow Bell - matches sidebar profile footer indicator */}
-          <button 
-            className="w-9 h-9 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-all cursor-pointer relative"
-            title="الإشعارات"
-          >
-            <Bell size={15} />
-            <span className="absolute top-2 left-2 w-2 h-2 rounded-full bg-red-600 ring-2 ring-white animate-pulse" />
-          </button>
-
-          {/* Sparkles indicator */}
-          <button 
-            className={`w-9 h-9 rounded-xl ${THEME.primary.lightBg} flex items-center justify-center ${THEME.primary.text} hover:scale-105 transition-all cursor-pointer hidden sm:flex`}
-            title="النظام الذكي"
-          >
-            <Sparkles size={15} />
-          </button>
-
-          {/* Primary Action Button */}
-          <button 
-            onClick={() => {
-              setIsRefreshing(true);
-              setTimeout(() => setIsRefreshing(false), 800);
-            }}
-            className={`flex items-center gap-1.5 px-3.5 py-1.5 md:py-2 ${THEME.primary.solid} ${THEME.primary.solidHover} text-white text-[11px] md:text-xs font-semibold rounded-xl transition-all cursor-pointer select-none`}
-          >
-            <RefreshCw 
-              size={12} 
-              className={`transition-transform duration-[800ms] ${isRefreshing ? 'rotate-180' : ''}`} 
-            />
-            <span>تحديث البيانات</span>
-          </button>
-        </div>
-      </header>
 
       {/* Main Container Content */}
       <main className="flex-1 px-8 md:px-12 pt-6 pb-24 md:pb-12 space-y-8">

@@ -13,19 +13,27 @@ import { PeopleManagement } from './features/personal/components/PeopleManagemen
 import { ExportsManagement } from './features/export/components/ExportsManagement';
 import { ImportsManagement } from './features/import/components/ImportsManagement';
 import { ReportsManagement } from './features/report/components/ReportsManagement';
+import { AuthProvider, useAuth } from './features/auth/context/AuthContext';
+import { LoginPage } from './features/auth/components/LoginPage';
+import { ProtectedRoute } from './components/ui/ProtectedRoute';
 
-export default function App() {
+function AppLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   return (
-    <Router>
-      <div id="app-root-shell" dir="rtl" className="flex h-screen w-screen overflow-hidden bg-neutral-50/50 text-neutral-800 font-sans antialiased">
+    <div id="app-root-shell" dir="rtl" className="flex h-screen w-screen overflow-hidden bg-neutral-50/50 text-neutral-800 font-sans antialiased">
+      {isAuthenticated && (
         <Sidebar 
           isCollapsed={isCollapsed} 
           setIsCollapsed={setIsCollapsed} 
         />
+      )}
 
-        <Routes>
+      <Routes>
+        <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" replace />} />
+        
+        <Route element={<ProtectedRoute />}>
           <Route element={<MainContent />}>
             <Route path="/" element={<Navigate to="/people" replace />} />
             <Route path="/dashboard" element={<MainPage />} />
@@ -35,11 +43,21 @@ export default function App() {
             <Route path="/reports" element={<ReportsManagement />} />
             <Route path="*" element={<Navigate to="/people" replace />} />
           </Route>
-        </Routes>
+        </Route>
+      </Routes>
 
-        <BottomNavBar />
-      </div>
-    </Router>
+      {isAuthenticated && <BottomNavBar />}
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <AppLayout />
+      </Router>
+    </AuthProvider>
   );
 }
 
