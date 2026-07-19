@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { 
-  LayoutGrid, 
-  ShoppingCart, 
-  Users, 
-  BarChart3, 
-  Send, 
-  Inbox, 
-  Store, 
-  ArrowLeftRight, 
-  FileText, 
-  Settings as SettingsIcon, 
-  HelpCircle, 
+import {
+  LayoutGrid,
+  ShoppingCart,
+  Users,
+  BarChart3,
+  Send,
+  Inbox,
+  Store,
+  ArrowLeftRight,
+  FileText,
+  Settings as SettingsIcon,
+  HelpCircle,
   LogOut,
   RefreshCw,
   Bell,
@@ -100,8 +100,36 @@ export const MainContent: React.FC = () => {
   // Generic empty state if Outlet has nothing (won't typically happen with routes defined)
 
   return (
-    <div className={`flex-1 min-h-screen overflow-y-auto flex flex-col ${THEME.neutral.appBackground}`}>
+    <div className={`flex-1 min-h-screen overflow-y-scroll flex flex-col ${THEME.neutral.appBackground}`}>
+      {/* Header Bar - Floating island matching the Sidebar style */}
+      <header className="mx-4 md:mx-12 mt-4 bg-white border border-slate-100 rounded-[1.8rem] h-20 shrink-0 flex items-center justify-between px-6 sticky top-4 z-20 select-none">
+        <div className="flex items-center gap-3">
+          {/* Mobile Only: Brand Logo to match Sidebar Concept */}
+          <div className="md:hidden flex items-center gap-2">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`w-9 h-9 ${THEME.primary.lightBg} rounded-xl flex items-center justify-center flex-shrink-0`}
+            >
+              <div className={`w-5 h-5 rounded-md ${THEME.primary.solid} flex items-center justify-center text-white text-[10px] font-semibold font-mono`}>
+                S
+              </div>
+            </motion.div>
+          </div>
 
+          {/* Breadcrumb Path */}
+          <div className="flex items-center gap-2 text-xs md:text-sm text-slate-400">
+            <span className="hover:text-slate-600 transition-colors cursor-pointer font-semibold">بوابة المنظومة</span>
+            <span className="text-slate-200">/</span>
+            <span className={`text-slate-600 uppercase font-black tracking-wide text-[10px] md:text-xs ${THEME.primary.lightBg} ${THEME.primary.text} rounded-lg px-2.5 py-1`}>
+              {activeName}
+            </span>
+          </div>
+        </div>
+
+
+
+      </header>
 
       {/* Main Container Content */}
       <main className="flex-1 px-8 md:px-12 pt-6 pb-24 md:pb-12 space-y-8">

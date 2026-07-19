@@ -12,6 +12,7 @@ import { SidebarItem } from './SidebarItem';
 import { NAVIGATION_ITEMS } from '../constants/menuItems';
 import { THEME } from '../../../theme';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../auth/context/AuthContext';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -24,6 +25,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const activeId = location.pathname.split('/')[1] || 'dashboard';
   const [profileOpen, setProfileOpen] = useState(false);
 
@@ -122,7 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }`}
           >
             <div className="w-9 h-9 rounded-full bg-slate-100 flex-shrink-0 flex items-center justify-center text-slate-700 font-semibold text-xs relative border border-slate-50">
-              أ
+              {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
               <span className="absolute bottom-0 left-0 w-2 h-2 bg-emerald-500 rounded-full ring-2 ring-white" />
             </div>
 
@@ -130,10 +132,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <div className="flex flex-1 items-center justify-between overflow-hidden">
                 <div className="flex flex-col text-right overflow-hidden">
                   <span className="text-xs font-semibold truncate text-slate-800 leading-tight">
-                    أحمد العتيبي
+                    {user?.name || 'مستخدم'}
                   </span>
                   <span className="text-[10px] text-slate-400 truncate mt-0.5">
-                    مدير الحساب
+                    {user?.email || 'admin@example.com'}
                   </span>
                 </div>
                 <ChevronDown
@@ -149,9 +151,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Profile Dropdown Popup */}
           {profileOpen && !isCollapsed && (
             <div className="absolute bottom-14 left-0 right-0 bg-white rounded-2xl border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.03)] overflow-hidden z-50 p-1 space-y-0.5">
-              <button className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-50 transition-colors text-right" onClick={() => setProfileOpen(false)}>
+              <button 
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-50 transition-colors text-right" 
+                onClick={() => {
+                  setProfileOpen(false);
+                  navigate('/profile');
+                }}
+              >
                 <User size={13} className="text-slate-400" />
                 <span>الملف الشخصي</span>
+              </button>
+              <button 
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-red-600 hover:bg-red-50 transition-colors text-right" 
+                onClick={() => {
+                  setProfileOpen(false);
+                  logout();
+                }}
+              >
+                <LogOut size={13} className="text-red-500" />
+                <span>تسجيل الخروج</span>
               </button>
             </div>
           )}

@@ -13,6 +13,7 @@ import { PeopleManagement } from './features/personal/components/PeopleManagemen
 import { ExportsManagement } from './features/export/components/ExportsManagement';
 import { ImportsManagement } from './features/import/components/ImportsManagement';
 import { ReportsManagement } from './features/report/components/ReportsManagement';
+import { ProfilePage } from './features/profile/components/ProfilePage';
 import { AuthProvider, useAuth } from './features/auth/context/AuthContext';
 import { LoginPage } from './features/auth/components/LoginPage';
 import { ProtectedRoute } from './components/ui/ProtectedRoute';
@@ -41,6 +42,7 @@ function AppLayout() {
             <Route path="/exports" element={<ExportsManagement />} />
             <Route path="/imports" element={<ImportsManagement />} />
             <Route path="/reports" element={<ReportsManagement />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="*" element={<Navigate to="/people" replace />} />
           </Route>
         </Route>

@@ -23,3 +23,10 @@ export async function logout(): Promise<{ message: string }> {
     method: 'POST',
   });
 }
+
+export async function updateProfile(data: { name: string; email: string; password?: string }): Promise<{ message: string; user: User }> {
+  return apiRequest<{ message: string; user: User }>('/profile', {
+    method: 'PUT',
+    data,
+  });
+}
