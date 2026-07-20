@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutGrid,
   ShoppingCart,
@@ -16,7 +16,8 @@ import {
   LogOut,
   RefreshCw,
   Bell,
-  Sparkles
+  Sparkles,
+  User
 } from 'lucide-react';
 import { THEME } from '../../../theme';
 import { PeopleManagement } from '../../personal/components/PeopleManagement';
@@ -27,6 +28,7 @@ import { MainPage } from '../../mainpage/components/MainPage';
 
 export const MainContent: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const activeId = location.pathname.split('/')[1] || 'dashboard';
   const [isRefreshing, setIsRefreshing] = useState(false);
   const getArabicName = (id: string) => {
@@ -127,8 +129,15 @@ export const MainContent: React.FC = () => {
           </div>
         </div>
 
-
-
+        {/* Mobile Profile Icon */}
+        <div className="md:hidden flex items-center">
+          <button
+            onClick={() => navigate('/profile')}
+            className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-600 hover:text-red-600 hover:bg-red-50 border border-slate-100 transition-all shadow-sm focus:outline-none"
+          >
+            <User size={18} />
+          </button>
+        </div>
       </header>
 
       {/* Main Container Content */}
