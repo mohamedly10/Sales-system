@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  MoreVertical, 
-  Settings, 
+import * as XLSX from 'xlsx';
+import {
+  ChevronLeft,
+  ChevronRight,
+  MoreVertical,
+  Settings,
   SlidersHorizontal,
   UserCheck,
   Plus,
@@ -64,7 +65,7 @@ export const PeopleManagement: React.FC = () => {
 
   // Modal related state
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   // حقول الإدخال المطلوبة والداعمة للهيكلية المطلوبة
   const [formName, setFormName] = useState('');
   const [formPhone, setFormPhone] = useState('');
@@ -113,13 +114,13 @@ export const PeopleManagement: React.FC = () => {
 
   const filteredPeople = safePeople.filter((person) => {
     const query = searchQuery.toLowerCase();
-    const matchesSearch = 
+    const matchesSearch =
       person.name.toLowerCase().includes(query) ||
       (person.phone ?? '').includes(query) ||
       (person.company ?? '').toLowerCase().includes(query) ||
       (person.address ?? '').toLowerCase().includes(query) ||
       (person.notes ?? '').toLowerCase().includes(query);
-    
+
     const matchesFilter = statusFilter === 'All' || person.status === statusFilter;
 
     return matchesSearch && matchesFilter;
@@ -142,7 +143,7 @@ export const PeopleManagement: React.FC = () => {
       };
 
       await createPerson(payload);
-      
+
       setFormName('');
       setFormPhone('');
       setFormAddress('');
@@ -176,6 +177,8 @@ export const PeopleManagement: React.FC = () => {
       setError(err instanceof Error ? err.message : 'فشل حذف المحدد');
     }
   };
+
+
 
   if (loading && people.length === 0) {
     return (
@@ -264,6 +267,8 @@ export const PeopleManagement: React.FC = () => {
           </button>
         )}
 
+
+
         <button
           onClick={() => setIsModalOpen(true)}
           className={`flex items-center gap-1.5 px-4.5 py-2 ${THEME.primary.solid} ${THEME.primary.solidHover} text-white text-xs font-medium rounded-2xl transition-all active:scale-95 cursor-pointer select-none`}
@@ -275,20 +280,20 @@ export const PeopleManagement: React.FC = () => {
 
       {/* الحاوية الرئيسية للجدول */}
       <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden font-sans">
-        
+
         {/* شريط الأدوات العلوي مع اتجاه RTL متناسق كلياً */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between p-5 border-b border-slate-50 gap-4">
-          
+
           {/* البحث وتصفية الفلاتر باستخدام المكونات المنفصلة Reusable Components */}
           <div className="flex flex-wrap items-center gap-3 flex-1">
-            <SearchInput 
+            <SearchInput
               value={searchQuery}
               onSearchChange={setSearchQuery}
               placeholder="البحث عن اسم، هاتف، شركة، عنوان أو ملاحظات..."
               className="max-w-xs"
             />
-            
-            <Dropdown 
+
+            <Dropdown
               options={filterOptions}
               selectedValue={statusFilter}
               onChange={setStatusFilter}
@@ -350,9 +355,8 @@ export const PeopleManagement: React.FC = () => {
                   return (
                     <tr
                       key={row.id}
-                      className={`transition-colors duration-150 ${
-                        isChecked ? 'bg-red-50/10' : 'hover:bg-slate-50/40'
-                      }`}
+                      className={`transition-colors duration-150 ${isChecked ? 'bg-red-50/10' : 'hover:bg-slate-50/40'
+                        }`}
                     >
                       <td className="p-4 text-center">
                         <input
@@ -452,7 +456,7 @@ export const PeopleManagement: React.FC = () => {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                
+
                 {/* 1. البيانات الأساسية (إجبارية) */}
                 <div className="space-y-3 bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
                   <div className="flex items-center gap-1.5 text-slate-700 font-medium text-xs pb-1 border-b border-slate-100/70">

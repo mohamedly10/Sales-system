@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../auth/context/AuthContext';
 import { updateProfile } from '../../auth/api/auth';
 import { PageHeader } from '../../../components/ui/PageHeader';
-import { User, Mail, Lock, CheckCircle, AlertCircle } from 'lucide-react';
+import { User, Mail, Lock, CheckCircle, AlertCircle, FileText } from 'lucide-react';
 import { THEME } from '../../../theme';
+import * as XLSX from 'xlsx';
+import { getPeople } from '../../personal/api/persons';
 
 export const ProfilePage: React.FC = () => {
   const { user } = useAuth();
@@ -15,6 +17,7 @@ export const ProfilePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [isExporting, setIsExporting] = useState(false);
 
   // Initialize fields with current user data
   useEffect(() => {
@@ -56,9 +59,69 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
+  const handleExport = async () => {
+    try {
+      setIsExporting(true);
+      const people = await getPeople();
+      if (!people || people.length === 0) {
+        setErrorMsg('لا توجد بيانات للتصدير');
+        return;
+      }
+
+      const wb = XLSX.utils.book_new();
+
+      const statusTranslation: Record<string, string> = {
+        'active': 'نشط',
+        'inactive': 'غير نشط',
+        'suspended': 'موقوف',
+      };
+
+      people.forEach((person) => {
+        const wsData = [
+          ['معلومات السجل'],
+          ['الاسم', person.name],
+          ['رقم الهاتف', person.phone],
+          ['الشركة/النشاط', person.company || '-'],
+          ['العنوان', person.address || '-'],
+          ['الحالة', statusTranslation[person.status] || person.status],
+          ['الرصيد', person.balance],
+          ['تاريخ الإضافة', person.created_at ? person.created_at.split('T')[0] : '-'],
+          ['الملاحظات', person.notes || '-']
+        ];
+
+        const ws = XLSX.utils.aoa_to_sheet(wsData);
+        
+        let sheetName = person.name.substring(0, 31).replace(/[\\/?*[\]:]/g, '_');
+        let counter = 1;
+        let finalSheetName = sheetName;
+        while (wb.SheetNames.includes(finalSheetName)) {
+          finalSheetName = `${sheetName.substring(0, 28)}_${counter}`;
+          counter++;
+        }
+
+        XLSX.utils.book_append_sheet(wb, ws, finalSheetName);
+      });
+
+      XLSX.writeFile(wb, 'سجلات_المستخدمين.xlsx');
+    } catch (err) {
+      setErrorMsg('حدث خطأ أثناء التصدير');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <PageHeader title="الملف الشخصي" />
+      <PageHeader title="الملف الشخصي">
+        <button
+          onClick={handleExport}
+          disabled={isExporting}
+          className={`flex items-center gap-1.5 px-4 py-2 border border-emerald-100 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 text-xs font-medium rounded-2xl transition-all cursor-pointer active:scale-95 ${isExporting ? 'opacity-50 cursor-not-allowed' : ''}`}
+        >
+          <FileText size={13} />
+          <span>{isExporting ? 'جاري التصدير...' : 'تصدير Excel'}</span>
+        </button>
+      </PageHeader>
 
       <div className="max-w-xl mx-auto bg-white rounded-[1.8rem] border border-slate-100 p-8 shadow-sm">
         
