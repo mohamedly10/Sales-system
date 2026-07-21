@@ -5,8 +5,8 @@ import { PageHeader } from '../../../components/ui/PageHeader';
 import { User, Mail, Lock, CheckCircle, AlertCircle, FileText } from 'lucide-react';
 import { THEME } from '../../../theme';
 import * as XLSX from 'xlsx';
+import { getReports } from '../../report/api/reports';
 import { getPeople } from '../../personal/api/persons';
-
 export const ProfilePage: React.FC = () => {
   const { user } = useAuth();
   
@@ -62,13 +62,18 @@ export const ProfilePage: React.FC = () => {
   const handleExport = async () => {
     try {
       setIsExporting(true);
-      const people = await getPeople();
+      
+      const [people, reportRes] = await Promise.all([
+        getPeople(),
+        getReports({ type: 'all' })
+      ]);
+      
+      const allReports = reportRes.data || [];
+      
       if (!people || people.length === 0) {
         setErrorMsg('لا توجد بيانات للتصدير');
         return;
       }
-
-      const wb = XLSX.utils.book_new();
 
       const statusTranslation: Record<string, string> = {
         'active': 'نشط',
@@ -76,18 +81,72 @@ export const ProfilePage: React.FC = () => {
         'suspended': 'موقوف',
       };
 
-      people.forEach((person) => {
-        const wsData = [
+      // Group reports by person name
+      const reportsByPerson: Record<string, typeof allReports> = {};
+      allReports.forEach(report => {
+        let personName = report.name || 'عام';
+        // Clean up prefixes added by backend so imports and exports group together
+        personName = personName.replace(/^خروج - /, '').replace(/^دخول - /, '').trim();
+        
+        if (!reportsByPerson[personName]) {
+          reportsByPerson[personName] = [];
+        }
+        reportsByPerson[personName].push(report);
+      });
+
+      const wb = XLSX.utils.book_new();
+
+      people.forEach(person => {
+        const personReports = reportsByPerson[person.name.trim()] || [];
+        
+        // Sort ascending by date for running balance
+        personReports.sort((a, b) => a.date.localeCompare(b.date));
+        
+        const wsData: any[][] = [
           ['معلومات السجل'],
           ['الاسم', person.name],
           ['رقم الهاتف', person.phone],
           ['الشركة/النشاط', person.company || '-'],
           ['العنوان', person.address || '-'],
           ['الحالة', statusTranslation[person.status] || person.status],
-          ['الرصيد', person.balance],
           ['تاريخ الإضافة', person.created_at ? person.created_at.split('T')[0] : '-'],
-          ['الملاحظات', person.notes || '-']
+          ['الملاحظات', person.notes || '-'],
+          [],
+          ['سجل الحركات (الدخول والخروج)'],
+          ['كود المرجع', 'التاريخ', 'البيان / الوصف', 'نوع المعاملة', 'القيمة', 'الرصيد المتراكم']
         ];
+
+        let balance = 0;
+        let totalImports = 0;
+        let totalExports = 0;
+
+        if (personReports.length > 0) {
+          personReports.forEach(report => {
+            balance += report.amount;
+            if (report.type === 'import') {
+              totalImports += report.amount;
+            } else {
+              totalExports += Math.abs(report.amount);
+            }
+
+            wsData.push([
+              report.id,
+              report.date,
+              report.desc || report.name,
+              report.type === 'export' ? 'خروج' : 'دخول',
+              (report.type === 'export' ? '-' : '+') + Math.abs(report.amount),
+              balance
+            ]);
+          });
+        } else {
+          wsData.push(['لا توجد حركات مسجلة لهذا المستخدم']);
+        }
+
+        wsData.push([]);
+        wsData.push(['إجمالي الدخول', '+' + totalImports]);
+        wsData.push(['إجمالي الخروج', '-' + totalExports]);
+        wsData.push(['الرصيد الصافي للحركات', balance]);
+        wsData.push(['الرصيد الإجمالي للمستخدم', person.balance]);
 
         const ws = XLSX.utils.aoa_to_sheet(wsData);
         
@@ -102,7 +161,7 @@ export const ProfilePage: React.FC = () => {
         XLSX.utils.book_append_sheet(wb, ws, finalSheetName);
       });
 
-      XLSX.writeFile(wb, 'سجلات_المستخدمين.xlsx');
+      XLSX.writeFile(wb, 'كشوفات_الحسابات_الشاملة.xlsx');
     } catch (err) {
       setErrorMsg('حدث خطأ أثناء التصدير');
     } finally {
